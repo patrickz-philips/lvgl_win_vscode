@@ -26,6 +26,13 @@
 
 #include "hal/hal.h"
 
+/* Include project-specific headers based on build configuration */
+#ifdef PROJECT_HAIR_DRYER
+  #include "hair_dryer.h"
+#elif defined(PROJECT_SMART_SHAVER)
+  #include "smart_shaver.h"
+#endif
+
 /*********************
  *      DEFINES
  *********************/
@@ -61,17 +68,22 @@ int main(int argc, char **argv)
   lv_init();
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
+  /* Screen size is set based on the selected project */
+#ifdef PROJECT_HAIR_DRYER
+  sdl_hal_init(HAIR_DRYER_SCREEN_WIDTH, HAIR_DRYER_SCREEN_HEIGHT);
+  /* Initialize Hair Dryer UI */
+  hair_dryer_ui_init();
+#elif defined(PROJECT_SMART_SHAVER)
+  sdl_hal_init(SMART_SHAVER_SCREEN_WIDTH, SMART_SHAVER_SCREEN_HEIGHT);
+  /* Initialize Smart Shaver UI */
+  smart_shaver_ui_init();
+#else
+  /* Default: Run the demo widgets */
   sdl_hal_init(320, 480);
-
-  /* Run the default demo */
-  /* To try a different demo or example, replace this with one of: */
-  /* - lv_demo_benchmark(); */
-  /* - lv_demo_stress(); */
-  /* - lv_example_label_1(); */
-  /* - etc. */
   lv_demo_widgets();
   //lv_example_label_1();
   //lv_demo_stress();
+#endif
 
   while(1) {
     /* Periodically call the lv_task handler.

@@ -10,6 +10,11 @@ set(LVGL_PRO_PROJECT_DIR
 
 option(USE_FREERTOS "Enable FreeRTOS" OFF) # Turn this on to enable FreeRTOS
 
+# Project Selection: Choose which project to build
+# Options: HAIR_DRYER, SMART_SHAVER
+set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build: HAIR_DRYER or SMART_SHAVER")
+set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER")
+
 if(USE_FREERTOS)
     message(STATUS "FreeRTOS is enabled")
 
@@ -71,6 +76,21 @@ target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS
 
 set(MAIN_SOURCES src/mouse_cursor_icon.c src/hal/hal.c)
 set(MAIN_LIBS lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES})
+
+# Add project-specific sources and include directories based on selection
+if(SELECTED_PROJECT STREQUAL "HAIR_DRYER")
+    message(STATUS "Building Hair Dryer Project")
+    add_compile_definitions(PROJECT_HAIR_DRYER)
+    list(APPEND MAIN_SOURCES hair_dryer/src/hair_dryer.c)
+    include_directories(${PROJECT_SOURCE_DIR}/hair_dryer/inc)
+elseif(SELECTED_PROJECT STREQUAL "SMART_SHAVER")
+    message(STATUS "Building Smart Shaver Project")
+    add_compile_definitions(PROJECT_SMART_SHAVER)
+    list(APPEND MAIN_SOURCES smart_shaver/src/smart_shaver.c)
+    include_directories(${PROJECT_SOURCE_DIR}/smart_shaver/inc)
+else()
+    message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}. Must be HAIR_DRYER or SMART_SHAVER")
+endif()
 
 # Create the main executable, depending on the FreeRTOS option
 if(USE_FREERTOS)

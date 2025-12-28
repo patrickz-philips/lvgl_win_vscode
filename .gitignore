@@ -10,3 +10,7 @@ bin/
 
 # MacOS file
 .DS_Store
+
+# Ignore product directories
+smart_shaver/
+hair_dryer/
