@@ -70,6 +70,8 @@ int main(int argc, char **argv)
   /* - lv_example_label_1(); */
   /* - etc. */
   lv_demo_widgets();
+  //lv_example_label_1();
+  //lv_demo_stress();
 
   while(1) {
     /* Periodically call the lv_task handler.
@@ -94,4 +96,3 @@ int main(int argc, char **argv)
 /**********************
  *   STATIC FUNCTIONS
  **********************/
-

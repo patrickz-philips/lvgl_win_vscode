@@ -24,6 +24,10 @@
 		"files.insertFinalNewline": true,
 		"files.trimFinalNewlines": true,
 		"cmake.configureOnOpen": true,
+		"cmake.configureSettings": {
+			"CMAKE_TOOLCHAIN_FILE": "D:/vcpkg/scripts/buildsystems/vcpkg.cmake",
+			"VCPKG_TARGET_TRIPLET": "x64-mingw-static"
+		},
 		"files.associations": {
 			"glob.h": "c",
 			"lvgl.h": "c"
@@ -59,7 +63,7 @@
 			{
 				"label": "Build and Run",
 				"type": "shell",
-				"command": "${workspaceFolder}/bin/main",
+				"command": "${workspaceFolder}/bin/main.exe",
 				"group": {
 					"kind": "test",
 					"isDefault": true
@@ -76,7 +80,7 @@
 				"name": "Debug LVGL demo with gdb",
 				"type": "cppdbg",
 				"request": "launch",
-		        "program": "${workspaceFolder}/bin/main",
+		        "program": "${workspaceFolder}/bin/main.exe",
 				"args": [],
 				"cwd": "${workspaceFolder}",
 				"preLaunchTask": "Build",
@@ -90,14 +94,14 @@
 				  },
 				  "windows": {
 					"MIMode": "gdb",
-					"miDebuggerPath": "C:\\MinGw\\bin\\gdb.exe"
+					"miDebuggerPath": "C:\\Program Files\\mingw64\\bin\\gdb.exe"
 				  }
 			},
 			{
 				"name": "Debug LVGL demo with LLVM",
 				"type": "cppdbg",
 				"request": "launch",
-		        "program": "${workspaceFolder}/bin/main",
+		        "program": "${workspaceFolder}/bin/main.exe",
 				"args": [],
 				"cwd": "${workspaceFolder}",
 				"preLaunchTask": "Build",
