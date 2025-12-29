@@ -91,7 +91,10 @@ set(MAIN_LIBS lvgl lvgl::examples lvgl::demos lvgl::thorvg ${SDL2_LIBRARIES})
 if(SELECTED_PROJECT STREQUAL "HAIR_DRYER")
     message(STATUS "Building Hair Dryer Project")
     add_compile_definitions(PROJECT_HAIR_DRYER)
-    list(APPEND MAIN_SOURCES hair_dryer/src/hair_dryer.c)
+    list(APPEND MAIN_SOURCES 
+        hair_dryer/src/hair_dryer.c
+        hair_dryer/src/led_strips_discolor.c
+    )
     include_directories(${PROJECT_SOURCE_DIR}/hair_dryer/inc)
 elseif(SELECTED_PROJECT STREQUAL "SMART_SHAVER")
     message(STATUS "Building Smart Shaver Project")
