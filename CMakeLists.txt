@@ -1,4 +1,14 @@
 cmake_minimum_required(VERSION 3.12.4)
+
+# vcpkg support - set toolchain file before project()
+if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
+    if(EXISTS "D:/vcpkg/scripts/buildsystems/vcpkg.cmake")
+        set(CMAKE_TOOLCHAIN_FILE "D:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+            CACHE STRING "Vcpkg toolchain file")
+        message(STATUS "Using vcpkg toolchain: ${CMAKE_TOOLCHAIN_FILE}")
+    endif()
+endif()
+
 project(lvgl C CXX)
 
 # Set the correct FreeRTOS port for your system (e.g., Posix for WSL)
