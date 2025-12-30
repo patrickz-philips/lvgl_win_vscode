@@ -9,6 +9,12 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     endif()
 endif()
 
+# Default to static triplet if not specified
+if(NOT DEFINED VCPKG_TARGET_TRIPLET)
+    set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "Vcpkg target triplet")
+endif()
+message(STATUS "Using vcpkg triplet: ${VCPKG_TARGET_TRIPLET}")
+
 project(lvgl C CXX)
 
 # Set the correct FreeRTOS port for your system (e.g., Posix for WSL)
@@ -97,6 +103,11 @@ set(EXECUTABLE_OUTPUT_PATH ${BIN_OUTPUT_DIR})
 set(WORKING_DIRECTORY ${PROJECT_SOURCE_DIR})
 
 # Find and include SDL2 library
+# For static linking, prefer static libraries
+if(VCPKG_TARGET_TRIPLET MATCHES ".*-static$")
+    set(SDL2_USE_STATIC_LIBS ON)
+    message(STATUS "Using static SDL2 library")
+endif()
 find_package(SDL2 REQUIRED)
 
 # Add compile definitions based on the selected options
@@ -238,6 +249,13 @@ endif()
 add_executable(main ${MAIN_SOURCES})
 target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
 target_link_libraries(main ${MAIN_LIBS})
+
+# Disable automatic DLL copying for static builds
+if(VCPKG_TARGET_TRIPLET MATCHES ".*-static$")
+    set(CMAKE_INSTALL_SYSTEM_RUNTIME_LIBS_SKIP TRUE)
+    set(VCPKG_APPLOCAL_DEPS OFF CACHE BOOL "Disable automatic DLL copying" FORCE)
+    message(STATUS "Static build: Disabled automatic DLL copying")
+endif()
 
 # On Windows, GUI applications do not show a console by default,
 # which hides log output. This ensures a console is available for logging.

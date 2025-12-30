@@ -103,7 +103,9 @@ if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
 echo [Step 1/2] Configuring CMake...
 cmake -B "%BUILD_DIR%" ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
-    -DSELECTED_PROJECT=%PROJECT%
+    -DSELECTED_PROJECT=%PROJECT% ^
+    -DVCPKG_TARGET_TRIPLET=x64-windows-static ^
+    -DCMAKE_TOOLCHAIN_FILE=D:/vcpkg/scripts/buildsystems/vcpkg.cmake
 
 if errorlevel 1 (
     echo.
