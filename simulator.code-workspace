@@ -32,6 +32,12 @@
 			"glob.h": "c",
 			"lvgl.h": "c"
 		},
+		"git.detectSubmodules": true,
+		"git.detectSubmodulesLimit": 10,
+		"git.repositoryScanMaxDepth": -1,
+		"git.scanRepositories": [
+			"."
+		],
 	},
 	// tasks.json section
 	"tasks": {
