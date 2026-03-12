@@ -16,6 +16,25 @@ REM ============================================================
 
 setlocal enabledelayedexpansion
 
+REM ============================================================
+REM Prerequisite checks
+REM ============================================================
+where cmake >nul 2>nul
+if errorlevel 1 (
+    echo ERROR: CMake was not found in PATH.
+    echo.
+    echo Fix options:
+    echo   1^) Install CMake, then reopen the terminal:
+    echo      winget install -e --id Kitware.CMake
+    echo   2^) Or download installer from Kitware and check "Add CMake to PATH".
+    echo.
+    echo Verify:
+    echo   cmake --version
+    echo.
+    pause
+    exit /b 1
+)
+
 REM Parse command line arguments
 set PROJECT=%1
 set BUILD_TYPE=%2
@@ -101,11 +120,13 @@ set BUILD_DIR=build\%BUILD_TYPE%\%PROJECT_LOWER%
 if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
 
 echo [Step 1/2] Configuring CMake...
+set "VCPKG_TOOLCHAIN=%~dp0..\vcpkg\scripts\buildsystems\vcpkg.cmake"
+
 cmake -B "%BUILD_DIR%" ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
     -DSELECTED_PROJECT=%PROJECT% ^
     -DVCPKG_TARGET_TRIPLET=x64-windows-static ^
-    -DCMAKE_TOOLCHAIN_FILE=D:/vcpkg/scripts/buildsystems/vcpkg.cmake
+    -DCMAKE_TOOLCHAIN_FILE="%VCPKG_TOOLCHAIN%"
 
 if errorlevel 1 (
     echo.

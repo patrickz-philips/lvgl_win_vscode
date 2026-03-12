@@ -2,10 +2,15 @@ cmake_minimum_required(VERSION 3.12.4)
 
 # vcpkg support - set toolchain file before project()
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    if(EXISTS "D:/vcpkg/scripts/buildsystems/vcpkg.cmake")
-        set(CMAKE_TOOLCHAIN_FILE "D:/vcpkg/scripts/buildsystems/vcpkg.cmake"
+    set(_VCPKG_CMAKE_WORKSPACE "${CMAKE_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake")
+    if(EXISTS "${_VCPKG_CMAKE_WORKSPACE}")
+        set(CMAKE_TOOLCHAIN_FILE "${_VCPKG_CMAKE_WORKSPACE}"
             CACHE STRING "Vcpkg toolchain file")
-        message(STATUS "Using vcpkg toolchain: ${CMAKE_TOOLCHAIN_FILE}")
+        message(STATUS "Using vcpkg toolchain (workspace): ${CMAKE_TOOLCHAIN_FILE}")
+    elseif(EXISTS "${CMAKE_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake")
+        set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake"
+            CACHE STRING "Vcpkg toolchain file")
+        message(STATUS "Using vcpkg toolchain (legacy): ${CMAKE_TOOLCHAIN_FILE}")
     endif()
 endif()
 
