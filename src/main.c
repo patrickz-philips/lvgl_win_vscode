@@ -26,11 +26,21 @@
 
 #include "hal/hal.h"
 
+#ifndef WIDGET_SCREEN_WIDTH
+  #define WIDGET_SCREEN_WIDTH 320
+#endif
+
+#ifndef WIDGET_SCREEN_HEIGHT
+  #define WIDGET_SCREEN_HEIGHT 480
+#endif
+
 /* Include project-specific headers based on build configuration */
 #ifdef PROJECT_HAIR_DRYER
   #include "hair_dryer.h"
 #elif defined(PROJECT_SMART_SHAVER)
   #include "smart_shaver.h"
+#elif defined(PROJECT_CHEETAH)
+  #include "cheetah.h"
 #endif
 
 /*********************
@@ -69,17 +79,18 @@ int main(int argc, char **argv)
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
   /* Screen size is set based on the selected project */
+  sdl_hal_init(WIDGET_SCREEN_WIDTH, WIDGET_SCREEN_HEIGHT);
 #ifdef PROJECT_HAIR_DRYER
-  sdl_hal_init(HAIR_DRYER_SCREEN_WIDTH, HAIR_DRYER_SCREEN_HEIGHT);
   /* Initialize Hair Dryer UI */
   hair_dryer_ui_init();
 #elif defined(PROJECT_SMART_SHAVER)
-  sdl_hal_init(SMART_SHAVER_SCREEN_WIDTH, SMART_SHAVER_SCREEN_HEIGHT);
   /* Initialize Smart Shaver UI */
   smart_shaver_ui_init();
+#elif defined(PROJECT_CHEETAH)
+  /* Initialize Smart Shaver UI */
+  cheetah_ui_init();
 #else
   /* Default: Run the demo widgets */
-  sdl_hal_init(320, 480);
   lv_demo_widgets();
   //lv_example_label_1();
   //lv_demo_stress();
