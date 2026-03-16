@@ -4,7 +4,7 @@ REM Universal Build Script for LVGL Project
 REM ============================================================
 REM This script allows you to build any project in Debug or Release mode
 REM Usage: build.bat [PROJECT] [BUILD_TYPE]
-REM   PROJECT: HAIR_DRYER, SMART_SHAVER (default: HAIR_DRYER)
+REM   PROJECT: HAIR_DRYER, SMART_SHAVER, CHEETAH (default: HAIR_DRYER)
 REM   BUILD_TYPE: Debug, Release (default: Debug)
 REM
 REM Examples:
@@ -12,6 +12,7 @@ REM   build.bat                           - Build HAIR_DRYER in Debug mode
 REM   build.bat HAIR_DRYER Debug         - Build HAIR_DRYER in Debug mode
 REM   build.bat HAIR_DRYER Release       - Build HAIR_DRYER in Release mode
 REM   build.bat SMART_SHAVER Debug       - Build SMART_SHAVER in Debug mode
+REM   build.bat CHEETAH Debug            - Build CHEETAH in Debug mode
 REM ============================================================
 
 setlocal enabledelayedexpansion
@@ -44,10 +45,10 @@ if "%PROJECT%"=="" set PROJECT=HAIR_DRYER
 if "%BUILD_TYPE%"=="" set BUILD_TYPE=Debug
 
 REM Validate PROJECT
-if /i not "%PROJECT%"=="HAIR_DRYER" if /i not "%PROJECT%"=="SMART_SHAVER" (
+if /i not "%PROJECT%"=="HAIR_DRYER" if /i not "%PROJECT%"=="SMART_SHAVER" if /i not "%PROJECT%"=="CHEETAH" (
     echo ERROR: Invalid project "%PROJECT%"
     echo.
-    echo Valid projects: HAIR_DRYER, SMART_SHAVER
+    echo Valid projects: HAIR_DRYER, SMART_SHAVER, CHEETAH
     echo.
     pause
     exit /b 1
@@ -66,6 +67,7 @@ if /i not "%BUILD_TYPE%"=="Debug" if /i not "%BUILD_TYPE%"=="Release" (
 REM Normalize case
 if /i "%PROJECT%"=="HAIR_DRYER" set PROJECT=HAIR_DRYER
 if /i "%PROJECT%"=="SMART_SHAVER" set PROJECT=SMART_SHAVER
+if /i "%PROJECT%"=="CHEETAH" set PROJECT=CHEETAH
 if /i "%BUILD_TYPE%"=="Debug" set BUILD_TYPE=Debug
 if /i "%BUILD_TYPE%"=="Release" set BUILD_TYPE=Release
 
@@ -73,6 +75,7 @@ REM Create lowercase version for directory name
 set PROJECT_LOWER=%PROJECT%
 if /i "%PROJECT%"=="HAIR_DRYER" set PROJECT_LOWER=hair_dryer
 if /i "%PROJECT%"=="SMART_SHAVER" set PROJECT_LOWER=smart_shaver
+if /i "%PROJECT%"=="CHEETAH" set PROJECT_LOWER=cheetah
 
 echo ============================================================
 echo Building %PROJECT% Project - %BUILD_TYPE% Mode

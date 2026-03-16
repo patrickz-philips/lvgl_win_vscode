@@ -32,9 +32,13 @@ set(LVGL_PRO_PROJECT_DIR
 option(USE_FREERTOS "Enable FreeRTOS" OFF) # Turn this on to enable FreeRTOS
 
 # Project Selection: Choose which project to build
-# Options: HAIR_DRYER, SMART_SHAVER
-set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build: HAIR_DRYER or SMART_SHAVER")
-set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER")
+# Options: HAIR_DRYER, SMART_SHAVER, CHEETAH
+set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build: HAIR_DRYER, SMART_SHAVER, or CHEETAH")
+set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER" "CHEETAH")
+
+# Widget screen size configuration (can be overridden when configuring CMake)
+set(WIDGET_SCREEN_WIDTH "320" CACHE STRING "Widget screen width (pixels)")
+set(WIDGET_SCREEN_HEIGHT "480" CACHE STRING "Widget screen height (pixels)")
 
 if(USE_FREERTOS)
     message(STATUS "FreeRTOS is enabled")
@@ -173,8 +177,20 @@ elseif(SELECTED_PROJECT STREQUAL "SMART_SHAVER")
     add_compile_definitions(PROJECT_SMART_SHAVER)
     list(APPEND MAIN_SOURCES smart_shaver/src/smart_shaver.c)
     include_directories(${PROJECT_SOURCE_DIR}/smart_shaver/inc)
+elseif(SELECTED_PROJECT STREQUAL "CHEETAH")
+    message(STATUS "Building Cheetah Project")
+    add_compile_definitions(PROJECT_CHEETAH)
+    list(APPEND MAIN_SOURCES cheetah/src/cheetah.c)
+    include_directories(${PROJECT_SOURCE_DIR}/cheetah/inc)
+
+    # If widget size wasn't explicitly overridden, default Cheetah to 96x96
+    if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
+        set(WIDGET_SCREEN_WIDTH "96" CACHE STRING "Widget screen width (pixels)" FORCE)
+        set(WIDGET_SCREEN_HEIGHT "96" CACHE STRING "Widget screen height (pixels)" FORCE)
+        message(STATUS "Cheetah default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
+    endif()
 else()
-    message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}. Must be HAIR_DRYER or SMART_SHAVER")
+    message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}. Must be HAIR_DRYER, SMART_SHAVER, or CHEETAH")
 endif()
 
 # Create the main executable, depending on the FreeRTOS option
@@ -252,7 +268,11 @@ if(LVGL_PRO_PROJECT_DIR)
 endif()
 
 add_executable(main ${MAIN_SOURCES})
-target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
+target_compile_definitions(main PRIVATE
+    LV_CONF_INCLUDE_SIMPLE
+    WIDGET_SCREEN_WIDTH=${WIDGET_SCREEN_WIDTH}
+    WIDGET_SCREEN_HEIGHT=${WIDGET_SCREEN_HEIGHT}
+)
 target_link_libraries(main ${MAIN_LIBS})
 
 # Disable automatic DLL copying for static builds
