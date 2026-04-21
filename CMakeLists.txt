@@ -182,6 +182,28 @@ elseif(SELECTED_PROJECT STREQUAL "CHEETAH")
     add_compile_definitions(PROJECT_CHEETAH)
     list(APPEND MAIN_SOURCES cheetah/src/cheetah.c)
     include_directories(${PROJECT_SOURCE_DIR}/cheetah/inc)
+    include_directories(${PROJECT_SOURCE_DIR}/cheetah/assets)
+
+    # Cheetah uses statically compiled assets (images) from cheetah/assets/*.c
+    list(APPEND MAIN_SOURCES
+        cheetah/assets/0.c
+        cheetah/assets/1.c
+        cheetah/assets/2.c
+        cheetah/assets/3.c
+        cheetah/assets/4.c
+        cheetah/assets/5.c
+        cheetah/assets/6.c
+        cheetah/assets/7.c
+        cheetah/assets/8.c
+        cheetah/assets/9.c
+        cheetah/assets/100.c
+        cheetah/assets/battery-icon.c
+        cheetah/assets/sensitive-icon.c
+        cheetah/assets/regular-icon.c
+        cheetah/assets/intensitive-icon.c
+        cheetah/assets/slient-icon.c
+        cheetah/assets/lock-icon.c
+    )
 
     # If widget size wasn't explicitly overridden, default Cheetah to 96x96
     if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
