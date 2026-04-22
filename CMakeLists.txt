@@ -32,9 +32,9 @@ set(LVGL_PRO_PROJECT_DIR
 option(USE_FREERTOS "Enable FreeRTOS" OFF) # Turn this on to enable FreeRTOS
 
 # Project Selection: Choose which project to build
-# Options: HAIR_DRYER, SMART_SHAVER, CHEETAH
-set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build: HAIR_DRYER, SMART_SHAVER, or CHEETAH")
-set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER" "CHEETAH")
+# Options: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER
+set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build: HAIR_DRYER, SMART_SHAVER, CHEETAH, or SLIDE_PLAYER")
+set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER" "CHEETAH" "SLIDE_PLAYER")
 
 # Widget screen size configuration (can be overridden when configuring CMake)
 set(WIDGET_SCREEN_WIDTH "320" CACHE STRING "Widget screen width (pixels)")
@@ -211,8 +211,28 @@ elseif(SELECTED_PROJECT STREQUAL "CHEETAH")
         set(WIDGET_SCREEN_HEIGHT "96" CACHE STRING "Widget screen height (pixels)" FORCE)
         message(STATUS "Cheetah default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
     endif()
+elseif(SELECTED_PROJECT STREQUAL "SLIDE_PLAYER")
+    message(STATUS "Building Slide Player Project")
+    add_compile_definitions(PROJECT_SLIDE_PLAYER)
+    list(APPEND MAIN_SOURCES slide_player/src/slide_player.c)
+    include_directories(${PROJECT_SOURCE_DIR}/slide_player/inc)
+    include_directories(${PROJECT_SOURCE_DIR}/slide_player/assets)
+
+    # Slide player uses statically compiled assets named 1.c ... x.c.
+    file(GLOB SLIDE_PLAYER_ASSET_SOURCES "${PROJECT_SOURCE_DIR}/slide_player/assets/[0-9]*.c")
+    if(NOT SLIDE_PLAYER_ASSET_SOURCES)
+        message(FATAL_ERROR "No slide_player assets found under slide_player/assets/*.c")
+    endif()
+    list(APPEND MAIN_SOURCES ${SLIDE_PLAYER_ASSET_SOURCES})
+
+    # If widget size wasn't explicitly overridden, default Slide Player to 466x466.
+    if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
+        set(WIDGET_SCREEN_WIDTH "466" CACHE STRING "Widget screen width (pixels)" FORCE)
+        set(WIDGET_SCREEN_HEIGHT "466" CACHE STRING "Widget screen height (pixels)" FORCE)
+        message(STATUS "Slide Player default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
+    endif()
 else()
-    message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}. Must be HAIR_DRYER, SMART_SHAVER, or CHEETAH")
+    message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}. Must be HAIR_DRYER, SMART_SHAVER, CHEETAH, or SLIDE_PLAYER")
 endif()
 
 # Create the main executable, depending on the FreeRTOS option

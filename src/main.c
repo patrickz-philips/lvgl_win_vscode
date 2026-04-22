@@ -41,6 +41,8 @@
   #include "smart_shaver.h"
 #elif defined(PROJECT_CHEETAH)
   #include "cheetah.h"
+#elif defined(PROJECT_SLIDE_PLAYER)
+  #include "slide_player.h"
 #endif
 
 /*********************
@@ -87,8 +89,11 @@ int main(int argc, char **argv)
   /* Initialize Smart Shaver UI */
   smart_shaver_ui_init();
 #elif defined(PROJECT_CHEETAH)
-  /* Initialize Smart Shaver UI */
+  /* Initialize Cheetah UI */
   cheetah_ui_init();
+#elif defined(PROJECT_SLIDE_PLAYER)
+  /* Initialize Slide Player UI */
+  slide_player_ui_init();
 #else
   /* Default: Run the demo widgets */
   lv_demo_widgets();
