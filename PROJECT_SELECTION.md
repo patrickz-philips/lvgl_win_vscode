@@ -5,10 +5,16 @@
 本项目支持在编译时选择不同的子项目：
 - **HAIR_DRYER** (吹风机项目)
 - **SMART_SHAVER** (智能剃须刀项目)
+- **CHEETAH** (Cheetah 小组件项目)
+- **SLIDE_PLAYER** (图片滑动播放项目)
+- **BATTERY_MONITOR** (电量监视项目)
 
 This project supports selecting different sub-projects at compile time:
 - **HAIR_DRYER** (Hair Dryer Project)
 - **SMART_SHAVER** (Smart Shaver Project)
+- **CHEETAH** (Cheetah Widget Project)
+- **SLIDE_PLAYER** (Slide Player Project)
+- **BATTERY_MONITOR** (Battery Monitor Project)
 
 ## 使用方法 / Usage
 
@@ -24,6 +30,10 @@ cmake --build build
 # 或者构建 Smart Shaver 项目 / Or build Smart Shaver Project
 cmake -B build -DSELECTED_PROJECT=SMART_SHAVER
 cmake --build build
+
+# 构建 Battery Monitor 项目 / Build Battery Monitor Project
+cmake -B build -DSELECTED_PROJECT=BATTERY_MONITOR
+cmake --build build
 ```
 
 ### 方法 2：修改 CMakeLists.txt / Method 2: Edit CMakeLists.txt
@@ -33,10 +43,10 @@ cmake --build build
 
 ```cmake
 # 找到这一行 / Find this line:
-set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build: HAIR_DRYER or SMART_SHAVER")
+set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, or BATTERY_MONITOR")
 
 # 修改为 / Change to:
-set(SELECTED_PROJECT "SMART_SHAVER" CACHE STRING "Select project to build: HAIR_DRYER or SMART_SHAVER")
+set(SELECTED_PROJECT "BATTERY_MONITOR" CACHE STRING "Select project to build: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, or BATTERY_MONITOR")
 ```
 
 
@@ -56,12 +66,23 @@ set(SELECTED_PROJECT "SMART_SHAVER" CACHE STRING "Select project to build: HAIR_
   - 模式、连接、自动清洁、设置按钮
   - 支持 FFmpeg 视频播放（需要启用 LV_USE_FFMPEG）
 
+### BATTERY_MONITOR (电量监视)
+- **屏幕尺寸 / Screen Size**: 410 x 502
+- **初始化函数 / Init Function**: `battery_monitor_ui_init()`
+- **功能 / Features**:
+  - 第 1 页显示 temperature、batVoltage、vbusVoltage、systemVoltage、batPercent
+  - 第 2 页显示 isCharging、is Discharge、isStandby、isVbusIn、isVbusGood、Charge status
+  - 支持左右滑动切换页面
+
 ## 编译定义 / Compile Definitions
 
 根据选择的项目，会自动定义相应的宏：
 
 - 选择 HAIR_DRYER 时定义：`PROJECT_HAIR_DRYER`
 - 选择 SMART_SHAVER 时定义：`PROJECT_SMART_SHAVER`
+- 选择 CHEETAH 时定义：`PROJECT_CHEETAH`
+- 选择 SLIDE_PLAYER 时定义：`PROJECT_SLIDE_PLAYER`
+- 选择 BATTERY_MONITOR 时定义：`PROJECT_BATTERY_MONITOR`
 
 这些宏在 `src/main.c` 中用于条件编译，以调用正确的初始化函数。
 
@@ -79,6 +100,11 @@ set(SELECTED_PROJECT "SMART_SHAVER" CACHE STRING "Select project to build: HAIR_
 │   │   └── smart_shaver.h
 │   └── src/
 │       └── smart_shaver.c
+├── battery_monitor/
+│   ├── inc/
+│   │   └── battery_monitor.h
+│   └── src/
+│       └── battery_monitor.c
 ├── src/
 │   └── main.c              # 主程序（包含条件编译）
 ├── CMakeLists.txt          # CMake 配置（包含项目选择）
@@ -131,7 +157,7 @@ cmake --build build
 
 1. 切换项目时建议清理 `build` 目录，以确保所有配置正确生效
 2. Smart Shaver 项目的视频播放功能需要启用 `LV_USE_FFMPEG` 选项
-3. 两个项目的屏幕尺寸不同，窗口大小会自动调整
+3. 不同项目的屏幕尺寸不同，窗口大小会自动调整
 4. 如果选择了无效的项目名称，CMake 配置会失败并提示错误
 
 ---

@@ -43,6 +43,9 @@ build.bat [PROJECT] [BUILD_TYPE]
 - `PROJECT`: 项目名称
   - `HAIR_DRYER` (默认)
   - `SMART_SHAVER`
+  - `CHEETAH`
+  - `SLIDE_PLAYER`
+  - `BATTERY_MONITOR`
 - `BUILD_TYPE`: 构建类型
   - `Debug` (默认)
   - `Release`
@@ -63,6 +66,9 @@ build.bat SMART_SHAVER Debug
 
 # 构建 Smart Shaver 项目 - Release 模式
 build.bat SMART_SHAVER Release
+
+# 构建 Battery Monitor 项目 - Debug 模式
+build.bat BATTERY_MONITOR Debug
 ```
 
 ### 2. run.bat - 运行脚本
@@ -84,6 +90,9 @@ run.bat HAIR_DRYER Release
 
 # 运行 Smart Shaver 项目 - Debug 版本
 run.bat SMART_SHAVER Debug
+
+# 运行 Battery Monitor 项目 - Debug 版本
+run.bat BATTERY_MONITOR Debug
 ```
 
 ### 3. clean.bat - 清理脚本
@@ -99,6 +108,9 @@ clean.bat [TARGET]
 - `bin` - 仅清理输出文件
 - `HAIR_DRYER` - 仅清理 Hair Dryer 项目
 - `SMART_SHAVER` - 仅清理 Smart Shaver 项目
+- `CHEETAH` - 仅清理 Cheetah 项目
+- `SLIDE_PLAYER` - 仅清理 Slide Player 项目
+- `BATTERY_MONITOR` - 仅清理 Battery Monitor 项目
 
 **示例：**
 ```batch
@@ -117,6 +129,9 @@ clean.bat HAIR_DRYER
 
 # 仅清理 Smart Shaver 项目
 clean.bat SMART_SHAVER
+
+# 仅清理 Battery Monitor 项目
+clean.bat BATTERY_MONITOR
 ```
 
 ## 🎯 构建特性
@@ -146,6 +161,11 @@ clean.bat SMART_SHAVER
 #### Smart Shaver 项目
 - 标准构建流程
 - 无特殊资源编译需求
+
+#### Battery Monitor 项目
+- 标准构建流程
+- 两页电量监视信息，支持左右滑动切换
+- 可通过 `battery_monitor_set_data()` 更新显示数据
 
 ## 🔧 编译优化
 

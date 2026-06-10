@@ -3,7 +3,7 @@ REM ============================================================
 REM Run Script for LVGL Project
 REM ============================================================
 REM Usage: run.bat [PROJECT] [BUILD_TYPE]
-REM   PROJECT: HAIR_DRYER, SMART_SHAVER (default: HAIR_DRYER)
+REM   PROJECT: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR (default: HAIR_DRYER)
 REM   BUILD_TYPE: Debug, Release (default: Debug)
 REM ============================================================
 
@@ -16,9 +16,9 @@ if "%PROJECT%"=="" set PROJECT=HAIR_DRYER
 if "%BUILD_TYPE%"=="" set BUILD_TYPE=Debug
 
 REM Validate and normalize
-if /i not "%PROJECT%"=="HAIR_DRYER" if /i not "%PROJECT%"=="SMART_SHAVER" (
+if /i not "%PROJECT%"=="HAIR_DRYER" if /i not "%PROJECT%"=="SMART_SHAVER" if /i not "%PROJECT%"=="CHEETAH" if /i not "%PROJECT%"=="SLIDE_PLAYER" if /i not "%PROJECT%"=="BATTERY_MONITOR" (
     echo ERROR: Invalid project "%PROJECT%"
-    echo Valid projects: HAIR_DRYER, SMART_SHAVER
+    echo Valid projects: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR
     pause
     exit /b 1
 )
@@ -32,12 +32,18 @@ if /i not "%BUILD_TYPE%"=="Debug" if /i not "%BUILD_TYPE%"=="Release" (
 
 if /i "%PROJECT%"=="HAIR_DRYER" set PROJECT=HAIR_DRYER
 if /i "%PROJECT%"=="SMART_SHAVER" set PROJECT=SMART_SHAVER
+if /i "%PROJECT%"=="CHEETAH" set PROJECT=CHEETAH
+if /i "%PROJECT%"=="SLIDE_PLAYER" set PROJECT=SLIDE_PLAYER
+if /i "%PROJECT%"=="BATTERY_MONITOR" set PROJECT=BATTERY_MONITOR
 if /i "%BUILD_TYPE%"=="Debug" set BUILD_TYPE=Debug
 if /i "%BUILD_TYPE%"=="Release" set BUILD_TYPE=Release
 
 set PROJECT_LOWER=%PROJECT%
 if /i "%PROJECT%"=="HAIR_DRYER" set PROJECT_LOWER=hair_dryer
 if /i "%PROJECT%"=="SMART_SHAVER" set PROJECT_LOWER=smart_shaver
+if /i "%PROJECT%"=="CHEETAH" set PROJECT_LOWER=cheetah
+if /i "%PROJECT%"=="SLIDE_PLAYER" set PROJECT_LOWER=slide_player
+if /i "%PROJECT%"=="BATTERY_MONITOR" set PROJECT_LOWER=battery_monitor
 
 set EXE_PATH=bin\%BUILD_TYPE%\%PROJECT_LOWER%\main.exe
 

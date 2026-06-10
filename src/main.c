@@ -26,14 +26,6 @@
 
 #include "hal/hal.h"
 
-#ifndef WIDGET_SCREEN_WIDTH
-  #define WIDGET_SCREEN_WIDTH 320
-#endif
-
-#ifndef WIDGET_SCREEN_HEIGHT
-  #define WIDGET_SCREEN_HEIGHT 480
-#endif
-
 /* Include project-specific headers based on build configuration */
 #ifdef PROJECT_HAIR_DRYER
   #include "hair_dryer.h"
@@ -43,6 +35,16 @@
   #include "cheetah.h"
 #elif defined(PROJECT_SLIDE_PLAYER)
   #include "slide_player.h"
+#elif defined(PROJECT_BATTERY_MONITOR)
+  #include "battery_monitor.h"
+#endif
+
+#ifndef WIDGET_SCREEN_WIDTH
+  #define WIDGET_SCREEN_WIDTH 320
+#endif
+
+#ifndef WIDGET_SCREEN_HEIGHT
+  #define WIDGET_SCREEN_HEIGHT 480
 #endif
 
 /*********************
@@ -94,6 +96,9 @@ int main(int argc, char **argv)
 #elif defined(PROJECT_SLIDE_PLAYER)
   /* Initialize Slide Player UI */
   slide_player_ui_init();
+#elif defined(PROJECT_BATTERY_MONITOR)
+  /* Initialize Battery Monitor UI */
+  battery_monitor_ui_init();
 #else
   /* Default: Run the demo widgets */
   lv_demo_widgets();

@@ -32,9 +32,9 @@ set(LVGL_PRO_PROJECT_DIR
 option(USE_FREERTOS "Enable FreeRTOS" OFF) # Turn this on to enable FreeRTOS
 
 # Project Selection: Choose which project to build
-# Options: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER
-set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build: HAIR_DRYER, SMART_SHAVER, CHEETAH, or SLIDE_PLAYER")
-set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER" "CHEETAH" "SLIDE_PLAYER")
+# Options: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR
+set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, or BATTERY_MONITOR")
+set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER" "CHEETAH" "SLIDE_PLAYER" "BATTERY_MONITOR")
 
 # Widget screen size configuration (can be overridden when configuring CMake)
 set(WIDGET_SCREEN_WIDTH "320" CACHE STRING "Widget screen width (pixels)")
@@ -231,8 +231,20 @@ elseif(SELECTED_PROJECT STREQUAL "SLIDE_PLAYER")
         set(WIDGET_SCREEN_HEIGHT "466" CACHE STRING "Widget screen height (pixels)" FORCE)
         message(STATUS "Slide Player default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
     endif()
+elseif(SELECTED_PROJECT STREQUAL "BATTERY_MONITOR")
+    message(STATUS "Building Battery Monitor Project")
+    add_compile_definitions(PROJECT_BATTERY_MONITOR)
+    list(APPEND MAIN_SOURCES battery_monitor/src/battery_monitor.c)
+    include_directories(${PROJECT_SOURCE_DIR}/battery_monitor/inc)
+
+    # Battery Monitor uses a 410x502 portrait widget size unless overridden.
+    if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
+        set(WIDGET_SCREEN_WIDTH "410" CACHE STRING "Widget screen width (pixels)" FORCE)
+        set(WIDGET_SCREEN_HEIGHT "502" CACHE STRING "Widget screen height (pixels)" FORCE)
+        message(STATUS "Battery Monitor default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
+    endif()
 else()
-    message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}. Must be HAIR_DRYER, SMART_SHAVER, CHEETAH, or SLIDE_PLAYER")
+    message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}. Must be HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, or BATTERY_MONITOR")
 endif()
 
 # Create the main executable, depending on the FreeRTOS option

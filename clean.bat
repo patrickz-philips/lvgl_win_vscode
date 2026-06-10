@@ -12,6 +12,7 @@ REM   clean.bat build        - Clean only build directory
 REM   clean.bat bin          - Clean only bin directory
 REM   clean.bat HAIR_DRYER   - Clean HAIR_DRYER project only
 REM   clean.bat SLIDE_PLAYER - Clean SLIDE_PLAYER project only
+REM   clean.bat BATTERY_MONITOR - Clean BATTERY_MONITOR project only
 REM ============================================================
 
 setlocal enabledelayedexpansion
@@ -31,10 +32,11 @@ if /i "%TARGET%"=="HAIR_DRYER" goto CLEAN_HAIR_DRYER
 if /i "%TARGET%"=="SMART_SHAVER" goto CLEAN_SMART_SHAVER
 if /i "%TARGET%"=="CHEETAH" goto CLEAN_CHEETAH
 if /i "%TARGET%"=="SLIDE_PLAYER" goto CLEAN_SLIDE_PLAYER
+if /i "%TARGET%"=="BATTERY_MONITOR" goto CLEAN_BATTERY_MONITOR
 
 echo ERROR: Unknown target "%TARGET%"
 echo.
-echo Valid targets: all, build, bin, HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER
+echo Valid targets: all, build, bin, HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR
 echo.
 pause
 exit /b 1
@@ -199,6 +201,37 @@ if exist "bin\Release\slide_player" (
 )
 if "%CLEANED%"=="0" (
     echo No SLIDE_PLAYER artifacts found, skipping.
+) else (
+    echo Done.
+)
+goto END
+
+:CLEAN_BATTERY_MONITOR
+echo Cleaning BATTERY_MONITOR project...
+echo.
+set CLEANED=0
+if exist "build\Debug\battery_monitor" (
+    echo Removing build\Debug\battery_monitor...
+    rmdir /s /q "build\Debug\battery_monitor" 2>nul
+    set CLEANED=1
+)
+if exist "build\Release\battery_monitor" (
+    echo Removing build\Release\battery_monitor...
+    rmdir /s /q "build\Release\battery_monitor" 2>nul
+    set CLEANED=1
+)
+if exist "bin\Debug\battery_monitor" (
+    echo Removing bin\Debug\battery_monitor...
+    rmdir /s /q "bin\Debug\battery_monitor" 2>nul
+    set CLEANED=1
+)
+if exist "bin\Release\battery_monitor" (
+    echo Removing bin\Release\battery_monitor...
+    rmdir /s /q "bin\Release\battery_monitor" 2>nul
+    set CLEANED=1
+)
+if "%CLEANED%"=="0" (
+    echo No BATTERY_MONITOR artifacts found, skipping.
 ) else (
     echo Done.
 )
