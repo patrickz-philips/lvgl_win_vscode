@@ -13,6 +13,7 @@ REM   clean.bat bin          - Clean only bin directory
 REM   clean.bat HAIR_DRYER   - Clean HAIR_DRYER project only
 REM   clean.bat SLIDE_PLAYER - Clean SLIDE_PLAYER project only
 REM   clean.bat BATTERY_MONITOR - Clean BATTERY_MONITOR project only
+REM   clean.bat ACC_DATA     - Clean ACC_DATA project only
 REM ============================================================
 
 setlocal enabledelayedexpansion
@@ -33,10 +34,11 @@ if /i "%TARGET%"=="SMART_SHAVER" goto CLEAN_SMART_SHAVER
 if /i "%TARGET%"=="CHEETAH" goto CLEAN_CHEETAH
 if /i "%TARGET%"=="SLIDE_PLAYER" goto CLEAN_SLIDE_PLAYER
 if /i "%TARGET%"=="BATTERY_MONITOR" goto CLEAN_BATTERY_MONITOR
+if /i "%TARGET%"=="ACC_DATA" goto CLEAN_ACC_DATA
 
 echo ERROR: Unknown target "%TARGET%"
 echo.
-echo Valid targets: all, build, bin, HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR
+echo Valid targets: all, build, bin, HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA
 echo.
 pause
 exit /b 1
@@ -232,6 +234,29 @@ if exist "bin\Release\battery_monitor" (
 )
 if "%CLEANED%"=="0" (
     echo No BATTERY_MONITOR artifacts found, skipping.
+) else (
+    echo Done.
+)
+goto END
+
+:CLEAN_ACC_DATA
+echo Cleaning ACC_DATA project...
+echo.
+set CLEANED=0
+for %%C in (Debug Release) do (
+    if exist "build\%%C\acc_data" (
+        echo Removing build\%%C\acc_data...
+        rmdir /s /q "build\%%C\acc_data" 2^>nul
+        set CLEANED=1
+    )
+    if exist "bin\%%C\acc_data" (
+        echo Removing bin\%%C\acc_data...
+        rmdir /s /q "bin\%%C\acc_data" 2^>nul
+        set CLEANED=1
+    )
+)
+if "%CLEANED%"=="0" (
+    echo No ACC_DATA artifacts found, skipping.
 ) else (
     echo Done.
 )

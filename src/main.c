@@ -37,6 +37,8 @@
   #include "slide_player.h"
 #elif defined(PROJECT_BATTERY_MONITOR)
   #include "battery_monitor.h"
+#elif defined(PROJECT_ACC_DATA)
+  #include "acc_data.h"
 #endif
 
 #ifndef WIDGET_SCREEN_WIDTH
@@ -99,6 +101,9 @@ int main(int argc, char **argv)
 #elif defined(PROJECT_BATTERY_MONITOR)
   /* Initialize Battery Monitor UI */
   battery_monitor_ui_init();
+#elif defined(PROJECT_ACC_DATA)
+  /* Initialize Accelerometer Data UI */
+  acc_data_ui_init();
 #else
   /* Default: Run the demo widgets */
   lv_demo_widgets();

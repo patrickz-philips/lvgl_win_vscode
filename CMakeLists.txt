@@ -32,9 +32,9 @@ set(LVGL_PRO_PROJECT_DIR
 option(USE_FREERTOS "Enable FreeRTOS" OFF) # Turn this on to enable FreeRTOS
 
 # Project Selection: Choose which project to build
-# Options: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR
-set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, or BATTERY_MONITOR")
-set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER" "CHEETAH" "SLIDE_PLAYER" "BATTERY_MONITOR")
+# Options: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA
+set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build")
+set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER" "CHEETAH" "SLIDE_PLAYER" "BATTERY_MONITOR" "ACC_DATA")
 
 # Widget screen size configuration (can be overridden when configuring CMake)
 set(WIDGET_SCREEN_WIDTH "320" CACHE STRING "Widget screen width (pixels)")
@@ -243,8 +243,19 @@ elseif(SELECTED_PROJECT STREQUAL "BATTERY_MONITOR")
         set(WIDGET_SCREEN_HEIGHT "502" CACHE STRING "Widget screen height (pixels)" FORCE)
         message(STATUS "Battery Monitor default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
     endif()
+elseif(SELECTED_PROJECT STREQUAL "ACC_DATA")
+    message(STATUS "Building Accelerometer Data Project")
+    add_compile_definitions(PROJECT_ACC_DATA)
+    list(APPEND MAIN_SOURCES acc_data/src/acc_data.c)
+    include_directories(${PROJECT_SOURCE_DIR}/acc_data/inc)
+
+    if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
+        set(WIDGET_SCREEN_WIDTH "410" CACHE STRING "Widget screen width (pixels)" FORCE)
+        set(WIDGET_SCREEN_HEIGHT "502" CACHE STRING "Widget screen height (pixels)" FORCE)
+        message(STATUS "Accelerometer Data default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
+    endif()
 else()
-    message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}. Must be HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, or BATTERY_MONITOR")
+    message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}")
 endif()
 
 # Create the main executable, depending on the FreeRTOS option
