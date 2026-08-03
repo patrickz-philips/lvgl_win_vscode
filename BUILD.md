@@ -24,7 +24,12 @@ lv_port_pc_vscode/
 │   └── Release/
 │       ├── hair_dryer/          # Hair Dryer项目Release构建文件
 │       └── smart_shaver/        # Smart Shaver项目Release构建文件
-├── hair_dryer/                   # Hair Dryer项目源码
+├── projects/                     # 工程源码
+│   ├── acc_data/
+│   ├── battery_monitor/
+│   ├── cheetah/
+│   ├── hair_dryer/
+│   └── slide_player/
 ├── smart_shaver/                 # Smart Shaver项目源码
 ├── lvgl/                         # LVGL库
 └── src/                          # 公共源码
@@ -153,8 +158,8 @@ clean.bat BATTERY_MONITOR
 ### 项目特定配置
 
 #### Hair Dryer 项目
-- Debug模式：从 `hair_dryer/assets/` 加载 `hair_dryer.png`
-- Release模式：使用静态编译的 `hair_dryer/assets/hair_dryer.c`
+- Debug模式：从 `projects/hair_dryer/assets/` 加载 `hair_dryer.png`
+- Release模式：使用静态编译的 `projects/hair_dryer/assets/hair_dryer.c`
   - 如果不存在，自动运行 `convert_image.py` 转换图片
   - 需要 Python 和 Pillow 库
 
@@ -307,7 +312,7 @@ cmake -B build/Debug/hair_dryer ^
 
 - [BUILD_STANDALONE.md](BUILD_STANDALONE.md) - 独立构建指南
 - [PROJECT_SELECTION.md](PROJECT_SELECTION.md) - 项目选择说明
-- [hair_dryer/assets/README.md](hair_dryer/assets/README.md) - Hair Dryer资源说明
+- [projects/hair_dryer/assets/README.md](projects/hair_dryer/assets/README.md) - Hair Dryer资源说明
 
 ## 💡 最佳实践
 

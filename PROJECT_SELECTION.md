@@ -90,21 +90,25 @@ set(SELECTED_PROJECT "BATTERY_MONITOR" CACHE STRING "Select project to build: HA
 
 ```
 .
-├── hair_dryer/
-│   ├── inc/
-│   │   └── hair_dryer.h
-│   └── src/
-│       └── hair_dryer.c
+├── projects/
+│   ├── acc_data/
+│   ├── battery_monitor/
+│   │   ├── inc/
+│   │   │   └── battery_monitor.h
+│   │   └── src/
+│   │       └── battery_monitor.c
+│   ├── cheetah/
+│   ├── hair_dryer/
+│   │   ├── inc/
+│   │   │   └── hair_dryer.h
+│   │   └── src/
+│   │       └── hair_dryer.c
+│   └── slide_player/
 ├── smart_shaver/
 │   ├── inc/
 │   │   └── smart_shaver.h
 │   └── src/
 │       └── smart_shaver.c
-├── battery_monitor/
-│   ├── inc/
-│   │   └── battery_monitor.h
-│   └── src/
-│       └── battery_monitor.c
 ├── src/
 │   └── main.c              # 主程序（包含条件编译）
 ├── CMakeLists.txt          # CMake 配置（包含项目选择）

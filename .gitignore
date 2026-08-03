@@ -13,6 +13,8 @@ bin/
 
 # Ignore product directories
 smart_shaver/
-hair_dryer/
-cheetah/
-slide_player/
+projects/acc_data/
+projects/battery_monitor/
+projects/hair_dryer/
+projects/cheetah/
+projects/slide_player/

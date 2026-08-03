@@ -143,35 +143,36 @@ target_include_directories(lvgl PUBLIC ${PROJECT_SOURCE_DIR} ${SDL2_INCLUDE_DIRS
 set(MAIN_SOURCES src/mouse_cursor_icon.c src/hal/hal.c)
 # Only link necessary libraries (removed examples and demos to speed up build)
 set(MAIN_LIBS lvgl ${SDL2_LIBRARIES})
+set(PROJECTS_DIR "${PROJECT_SOURCE_DIR}/projects")
 
 # Add project-specific sources and include directories based on selection
 if(SELECTED_PROJECT STREQUAL "HAIR_DRYER")
     message(STATUS "Building Hair Dryer Project")
     add_compile_definitions(PROJECT_HAIR_DRYER)
     list(APPEND MAIN_SOURCES 
-        hair_dryer/src/hair_dryer.c
-        hair_dryer/src/led_strips_discolor.c
+        ${PROJECTS_DIR}/hair_dryer/src/hair_dryer.c
+        ${PROJECTS_DIR}/hair_dryer/src/led_strips_discolor.c
     )
-    include_directories(${PROJECT_SOURCE_DIR}/hair_dryer/inc)
+    include_directories(${PROJECTS_DIR}/hair_dryer/inc)
     
     # Asset compilation strategy: Release uses static, Debug uses dynamic
     if(CMAKE_BUILD_TYPE STREQUAL "Release")
         # Release mode: Use static compiled assets
-        if(EXISTS "${PROJECT_SOURCE_DIR}/hair_dryer/assets/hair_dryer.c")
-            list(APPEND MAIN_SOURCES hair_dryer/assets/hair_dryer.c)
+        if(EXISTS "${PROJECTS_DIR}/hair_dryer/assets/hair_dryer.c")
+            list(APPEND MAIN_SOURCES ${PROJECTS_DIR}/hair_dryer/assets/hair_dryer.c)
             add_compile_definitions(USE_STATIC_ASSETS)
             message(STATUS "Release mode: Using static compiled assets")
         else()
             message(WARNING "Release mode but static asset file not found!")
-            message(WARNING "Please generate hair_dryer/assets/hair_dryer.c from hair_dryer.png")
-            message(WARNING "See hair_dryer/assets/README.md for instructions")
+            message(WARNING "Please generate projects/hair_dryer/assets/hair_dryer.c from hair_dryer.png")
+            message(WARNING "See projects/hair_dryer/assets/README.md for instructions")
             message(STATUS "Falling back to filesystem loading")
         endif()
     else()
         # Debug mode: Use dynamic filesystem loading
         message(STATUS "Debug mode: Using dynamic filesystem loading")
     endif()
-    include_directories(${PROJECT_SOURCE_DIR}/hair_dryer/assets)
+    include_directories(${PROJECTS_DIR}/hair_dryer/assets)
 elseif(SELECTED_PROJECT STREQUAL "SMART_SHAVER")
     message(STATUS "Building Smart Shaver Project")
     add_compile_definitions(PROJECT_SMART_SHAVER)
@@ -180,29 +181,29 @@ elseif(SELECTED_PROJECT STREQUAL "SMART_SHAVER")
 elseif(SELECTED_PROJECT STREQUAL "CHEETAH")
     message(STATUS "Building Cheetah Project")
     add_compile_definitions(PROJECT_CHEETAH)
-    list(APPEND MAIN_SOURCES cheetah/src/cheetah.c)
-    include_directories(${PROJECT_SOURCE_DIR}/cheetah/inc)
-    include_directories(${PROJECT_SOURCE_DIR}/cheetah/assets)
+    list(APPEND MAIN_SOURCES ${PROJECTS_DIR}/cheetah/src/cheetah.c)
+    include_directories(${PROJECTS_DIR}/cheetah/inc)
+    include_directories(${PROJECTS_DIR}/cheetah/assets)
 
-    # Cheetah uses statically compiled assets (images) from cheetah/assets/*.c
+    # Cheetah uses statically compiled assets (images) from projects/cheetah/assets/*.c
     list(APPEND MAIN_SOURCES
-        cheetah/assets/0.c
-        cheetah/assets/1.c
-        cheetah/assets/2.c
-        cheetah/assets/3.c
-        cheetah/assets/4.c
-        cheetah/assets/5.c
-        cheetah/assets/6.c
-        cheetah/assets/7.c
-        cheetah/assets/8.c
-        cheetah/assets/9.c
-        cheetah/assets/100.c
-        cheetah/assets/battery-icon.c
-        cheetah/assets/sensitive-icon.c
-        cheetah/assets/regular-icon.c
-        cheetah/assets/intensitive-icon.c
-        cheetah/assets/slient-icon.c
-        cheetah/assets/lock-icon.c
+        ${PROJECTS_DIR}/cheetah/assets/0.c
+        ${PROJECTS_DIR}/cheetah/assets/1.c
+        ${PROJECTS_DIR}/cheetah/assets/2.c
+        ${PROJECTS_DIR}/cheetah/assets/3.c
+        ${PROJECTS_DIR}/cheetah/assets/4.c
+        ${PROJECTS_DIR}/cheetah/assets/5.c
+        ${PROJECTS_DIR}/cheetah/assets/6.c
+        ${PROJECTS_DIR}/cheetah/assets/7.c
+        ${PROJECTS_DIR}/cheetah/assets/8.c
+        ${PROJECTS_DIR}/cheetah/assets/9.c
+        ${PROJECTS_DIR}/cheetah/assets/100.c
+        ${PROJECTS_DIR}/cheetah/assets/battery-icon.c
+        ${PROJECTS_DIR}/cheetah/assets/sensitive-icon.c
+        ${PROJECTS_DIR}/cheetah/assets/regular-icon.c
+        ${PROJECTS_DIR}/cheetah/assets/intensitive-icon.c
+        ${PROJECTS_DIR}/cheetah/assets/slient-icon.c
+        ${PROJECTS_DIR}/cheetah/assets/lock-icon.c
     )
 
     # If widget size wasn't explicitly overridden, default Cheetah to 96x96
@@ -214,14 +215,14 @@ elseif(SELECTED_PROJECT STREQUAL "CHEETAH")
 elseif(SELECTED_PROJECT STREQUAL "SLIDE_PLAYER")
     message(STATUS "Building Slide Player Project")
     add_compile_definitions(PROJECT_SLIDE_PLAYER)
-    list(APPEND MAIN_SOURCES slide_player/src/slide_player.c)
-    include_directories(${PROJECT_SOURCE_DIR}/slide_player/inc)
-    include_directories(${PROJECT_SOURCE_DIR}/slide_player/assets)
+    list(APPEND MAIN_SOURCES ${PROJECTS_DIR}/slide_player/src/slide_player.c)
+    include_directories(${PROJECTS_DIR}/slide_player/inc)
+    include_directories(${PROJECTS_DIR}/slide_player/assets)
 
     # Slide player uses statically compiled assets named 1.c ... x.c.
-    file(GLOB SLIDE_PLAYER_ASSET_SOURCES "${PROJECT_SOURCE_DIR}/slide_player/assets/[0-9]*.c")
+    file(GLOB SLIDE_PLAYER_ASSET_SOURCES "${PROJECTS_DIR}/slide_player/assets/[0-9]*.c")
     if(NOT SLIDE_PLAYER_ASSET_SOURCES)
-        message(FATAL_ERROR "No slide_player assets found under slide_player/assets/*.c")
+        message(FATAL_ERROR "No slide_player assets found under projects/slide_player/assets/*.c")
     endif()
     list(APPEND MAIN_SOURCES ${SLIDE_PLAYER_ASSET_SOURCES})
 
@@ -234,8 +235,8 @@ elseif(SELECTED_PROJECT STREQUAL "SLIDE_PLAYER")
 elseif(SELECTED_PROJECT STREQUAL "BATTERY_MONITOR")
     message(STATUS "Building Battery Monitor Project")
     add_compile_definitions(PROJECT_BATTERY_MONITOR)
-    list(APPEND MAIN_SOURCES battery_monitor/src/battery_monitor.c)
-    include_directories(${PROJECT_SOURCE_DIR}/battery_monitor/inc)
+    list(APPEND MAIN_SOURCES ${PROJECTS_DIR}/battery_monitor/src/battery_monitor.c)
+    include_directories(${PROJECTS_DIR}/battery_monitor/inc)
 
     # Battery Monitor uses a 410x502 portrait widget size unless overridden.
     if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
@@ -246,8 +247,8 @@ elseif(SELECTED_PROJECT STREQUAL "BATTERY_MONITOR")
 elseif(SELECTED_PROJECT STREQUAL "ACC_DATA")
     message(STATUS "Building Accelerometer Data Project")
     add_compile_definitions(PROJECT_ACC_DATA)
-    list(APPEND MAIN_SOURCES acc_data/src/acc_data.c)
-    include_directories(${PROJECT_SOURCE_DIR}/acc_data/inc)
+    list(APPEND MAIN_SOURCES ${PROJECTS_DIR}/acc_data/src/acc_data.c)
+    include_directories(${PROJECTS_DIR}/acc_data/inc)
 
     if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
         set(WIDGET_SCREEN_WIDTH "410" CACHE STRING "Widget screen width (pixels)" FORCE)

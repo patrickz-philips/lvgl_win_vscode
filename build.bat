@@ -99,11 +99,11 @@ echo.
 
 REM Special handling for HAIR_DRYER Release mode - convert images
 if /i "%PROJECT%"=="HAIR_DRYER" if /i "%BUILD_TYPE%"=="Release" (
-    if not exist "hair_dryer\assets\hair_dryer.c" (
+    if not exist "projects\hair_dryer\assets\hair_dryer.c" (
         echo [Pre-build] Converting hair_dryer.png to C array...
         echo.
         
-        python hair_dryer\assets\convert_image.py
+        python projects\hair_dryer\assets\convert_image.py
         
         if errorlevel 1 (
             echo.
