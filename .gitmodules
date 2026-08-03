@@ -1,9 +1,24 @@
-[submodule "lv_drivers"]
-	path = lv_drivers
-	url = https://github.com/lvgl/lv_drivers.git
 [submodule "lvgl"]
 	path = lvgl
 	url = https://github.com/lvgl/lvgl.git
 [submodule "FreeRTOS"]
 	path = FreeRTOS
 	url = https://github.com/FreeRTOS/FreeRTOS-Kernel.git
+[submodule "projects/acc_data"]
+	path = projects/acc_data
+	url = https://github.com/patrickz-philips/lvgl_acc_data.git
+[submodule "projects/battery_monitor"]
+	path = projects/battery_monitor
+	url = https://github.com/patrickz-philips/lvgl_battery_monitor.git
+[submodule "projects/cheetah"]
+	path = projects/cheetah
+	url = https://github.com/patrickz-philips/lvgl_cheetah
+[submodule "projects/hair_dryer"]
+	path = projects/hair_dryer
+	url = https://github.com/patrickzhang1024/lvgl_hair_dryer
+[submodule "projects/slide_player"]
+	path = projects/slide_player
+	url = https://github.com/patrickz-philips/lvgl_silde_player.git
+[submodule "projects/smart_shaver"]
+	path = projects/smart_shaver
+	url = https://github.com/patrickzhang1024/lvgl_smart_shaver.git

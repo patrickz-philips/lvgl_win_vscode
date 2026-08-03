@@ -1,6 +1,6 @@
 # Usage Guide
 
-This document covers the simulator controls and public integration APIs of the five implemented projects. Build instructions are in [BUILD.md](BUILD.md).
+This document covers the simulator controls and public integration APIs of the six project modules. Build instructions are in [BUILD.md](BUILD.md).
 
 ## Start a Project
 
@@ -31,6 +31,15 @@ Use the mouse to operate the control panel:
 - `Style Breathe`, `Style Wave`, and `Style Pulse` select the animation pattern. Changing style stops the active run state.
 
 Debug loads the PNG from the repository at runtime; Release normally uses the compiled C asset. The module header lays out the UI for 800 x 720.
+
+### Smart Shaver
+
+```batch
+build.bat SMART_SHAVER Debug
+run.bat SMART_SHAVER Debug
+```
+
+Drag horizontally to move between four 320 x 640 pages. The first page contains clean, replace, and ready controls; the second contains status and settings controls; the remaining pages are placeholders.
 
 ### Cheetah
 
@@ -73,6 +82,25 @@ The chart keeps 125 points, representing a 2.5-second window when samples arrive
 ## Integration APIs
 
 Call all UI update functions from the LVGL thread. Initialize a module once before sending data.
+
+### Module Initialization
+
+| Module | Public entry point |
+| --- | --- |
+| Hair Dryer | `hair_dryer_ui_init()` |
+| Smart Shaver | `smart_shaver_ui_init()` |
+| Cheetah | `cheetah_ui_init()` |
+| Slide Player | `slide_player_ui_init()` |
+| Battery Monitor | `battery_monitor_ui_init()` |
+| ACC Data | `acc_data_ui_init()` |
+
+The modules keep LVGL object or timer state and do not expose deinitialization APIs. Initialize the selected module once per LVGL lifetime.
+
+### Hair Dryer LED Animations
+
+`projects/hair_dryer/inc/led_strips_discolor.h` exposes solid color, breathe, roulette, wave, and pulse controls. Call `led_strips_discolor_init()` before starting an animation. Arrays passed to `led_strips_discolor_init()` and `led_strips_set_segmented_mode()` must remain valid while animation timers use them. Use the matching stop API before deleting those LVGL objects.
+
+Speed, color, and animation arguments use the `LED_SPEED_*`, `LED_COLOR_*`, and `LED_TYPE_*` constants from the same header.
 
 ### Battery Monitor Data
 
@@ -124,6 +152,10 @@ else if(action == ACC_DATA_RECORD_ACTION_STOP) {
 ```
 
 After saving, call `acc_data_set_save_finished(true)` or `acc_data_set_save_finished(false)`. Call `acc_data_set_sdcard_missing()` when storage is unavailable. These functions only update UI state; file recording and SD-card access belong to the host application.
+
+### ACC Data Embedded Model
+
+`projects/acc_data/inc/model.h` and `src/model.c` provide an ESP-IDF/FreeRTOS adapter for sensor, PMU, button, and storage events. This adapter depends on ESP-IDF types and hardware services and is intentionally excluded from the Windows SDL target. `model_post_*()` functions enqueue task-context events; they are not documented as ISR-safe APIs.
 
 ## Common Runtime Issues
 

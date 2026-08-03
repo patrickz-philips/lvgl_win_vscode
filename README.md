@@ -1,189 +1,97 @@
-# VSCode Simulator project for LVGL
+# LVGL Windows Simulator Workspace
 
-[LVGL](https://github.com/lvgl/lvgl) is written mainly for microcontrollers and embedded systems, however you can run the library **on your PC** as well without any embedded hardware. The code written on PC can be simply copied when your are using an embedded system.
+This repository is the Windows SDL host for a set of LVGL application modules. The root project owns the common simulator, build integration, and developer scripts. LVGL, FreeRTOS, and every application under `projects/` are Git submodules.
 
-This project is pre-configured for VSCode and should work work on Windows, Linux and MacOs as well. FreeRTOS is also included and can be optionally enabled to better simulate embedded system's behavior. 
+## Components
 
-## Get started
+| Path | Responsibility |
+| --- | --- |
+| `src/` | SDL display/input host, LVGL loop, and selected-project dispatch |
+| `projects/` | Independently versioned application modules |
+| `lvgl/` | LVGL upstream dependency |
+| `FreeRTOS/` | Optional FreeRTOS kernel dependency |
+| `CMakeLists.txt` | Host and application integration |
+| `build.bat`, `run.bat`, `clean.bat` | Windows build, run, and cleanup entry points |
+| `docs/` | Build modes, runtime controls, and integration APIs |
 
-### Install SDL and the build tools
+Generated files are kept under `build/` and `bin/` and are not source-controlled.
 
-- **Windows (vcpkg):** `vcpkg install sdl2`  (`vcpkg` can be installed from [https://github.com/microsoft/vcpkg](https://github.com/microsoft/vcpkg)) Also install either MinGW or another compiler and `cmake`.
-- **macOS (Homebrew):** `brew install sdl2 cmake make`  
-- **Linux:**  
-  - **Debian/Ubuntu:** `sudo apt install build-essential cmake libsdl2-dev`  
-  - **Arch:** `sudo pacman -S base-devel cmake sdl2`  
-  - **Fedora:** `sudo dnf install @development-tools cmake SDL2-devel`  
-- **Manual Installation of SDL:** Download from [SDL’s website](https://github.com/libsdl-org/SDL/releases) and place headers/libraries in your project.
-- **Verify Installation:** `sdl2-config --version`, `cmake --version`, `gcc --version`, `g++ --version` (should return the installed version).  
+## Checkout
 
-### Get the PC project
+Clone the root repository and all dependencies:
 
-Clone the PC project and the related sub modules:
-
-```bash
-git clone --recursive https://github.com/lvgl/lv_port_pc_vscode
+```powershell
+git clone --recursive https://github.com/patrickz-philips/lvgl_win_vscode.git
+cd lvgl_win_vscode
 ```
 
-## Usage
+For an existing checkout:
 
-### Visual Studio Code
-
-1. Be sure you have installed [SDL and the build tools](#install-sdl-and-the-build-tools)
-2. Open the project by double clicking on `simulator.code-workspace` or opening it with `File/Open Workspace from File`
-3. Install the recommended plugins
-4. Click the Run and Debug page on the left, and select `Debug LVGL demo with gdb` from the drop-down on the top. Like this:
-![image](https://github.com/lvgl/lv_port_pc_vscode/assets/7599318/f527b235-5718-4949-b5f0-bd807b3a64ba)
-5. Click the Play button or hit F5 to start debugging.
-
-#### ArchLinux User
-
-VSCode does not officially provide an installation package under Arch, you need to use the AUR manager `paru` to install it.
-The command is as follows:
-
-```bash
-paru -S visual-studio-code-bin
+```powershell
+git submodule sync --recursive
+git submodule update --init --recursive
 ```
 
-#### macOS
+Keep vcpkg beside this repository:
 
-Apple's default clang does not support the `-fsanitize=leak` flag.
-
-to build using the latest version of clang from homebrew, do the following:
-
-1. `brew install llvm`
-
-2. cmd+shift+p and run `Cmake: select a kit`, then `[Scan for kits]`
-
-3. then cmd+shift+p and run `Cmake: select a kit`, select the version of clang you just installed from homebrew (it should say `Using compilers C=/opt/homebrew/opt/llvm/bin/clang ...`)
-
-4. reconfigure by running cmd+shift+p `Cmake: Configure`
-
-5. build using [step 4 above](#visual-studio-code)
-
-### FreeRTOS configuration
-To correctly configure the project, the RTOS (Real-Time Operating System) requires a significant amount of heap memory, especially when debugging an SDL (Simple DirectMedia Layer) window application. In this project, the heap memory has been experimentally set to **512 MB**.
-
-```c
-#define configTOTAL_HEAP_SIZE ( ( size_t ) ( 512 * 1024 * 1024 ) )  // 512 MB Heap
-```
-This configuration ensures that the SDL window is displayed in a timely manner. If this value is reduced, it may cause significant delays in the SDL window's appearance. If the allocated heap memory is too small, the window may fail to appear altogether.
-Therefore, it is crucial to allocate sufficient heap memory to ensure smooth execution and debugging experience.
-
-### Enable FreeRTOS 
-To enable the rtos part of this project select in lv_conf.h `#define LV_USE_OS   LV_OS_NONE` to `#define LV_USE_OS  LV_OS_FREERTOS`
-Additionaly you have to enable the compilation of all FreeRTOS Files by turning on the `option(USE_FREERTOS "Enable FreeRTOS" OFF)` in the CMakeLists.txt file or
-by enabling the same flag from the command line when bootstrapping `cmake`:
-
-```bash
-cmake -B build -DUSE_FREERTOS=ON
+```text
+lvgl_projects/
+|-- lvgl_win_vscode/
+`-- vcpkg/
 ```
 
-### CMake
+No build file should contain a machine-specific absolute vcpkg path.
 
-This project uses CMake under the hood which can be used without Visula Studio Code too. Just type these in a Terminal when you are in the project's root folder:
+## Prerequisites
 
-```bash
-mkdir build
-cd build
-cmake ..
-make -j
+- Windows 10 or later
+- CMake 3.12.4 or later
+- Visual Studio Build Tools or another CMake-supported C/C++ toolchain
+- vcpkg at `../vcpkg`
+- SDL2 installed for the selected vcpkg triplet
+
+Install the default static dependency:
+
+```powershell
+..\vcpkg\vcpkg.exe install sdl2:x64-windows-static
 ```
 
-## Run demos and examples
+## Build From The Root
 
-By default, the widgets demo (`lv_demo_widgets()`) will run. If you want to run a different demo or example from the LVGL library,
-simply replace the demo function call in the code with another one—such as `lv_demo_benchmark()` or `lv_example_label_1()`.
+The default build uses `x64-windows-static`, producing an executable that does not require the vcpkg SDL2 DLL at runtime:
 
-```c
-int main(int argc, char **argv)
-{
-  /* ... */
-  /* Run the default demo */
-  /* To try a different demo or example, replace this with one of: */
-  /* - lv_demo_benchmark(); */
-  /* - lv_demo_stress(); */
-  /* - lv_example_label_1(); */
-  /* - etc. */
-  lv_demo_widgets(); 
-
-  while(1) {
-      /* ... */
-  }
-  return 0;
-}
+```powershell
+.\build.bat HAIR_DRYER Debug
+.\run.bat HAIR_DRYER Debug
 ```
 
-## Optional library
+The default arguments are `HAIR_DRYER Debug`. Output is isolated by configuration and application:
 
-There are also FreeType and FFmpeg support. You can install these according to the followings:
-
-### Linux
-
-```bash
-# FreeType support
-wget https://kumisystems.dl.sourceforge.net/project/freetype/freetype2/2.13.2/freetype-2.13.2.tar.xz
-tar -xf freetype-2.13.2.tar.xz
-cd freetype-2.13.2
-make
-make install
+```text
+build/<Debug|Release>/<project>/
+bin/<Debug|Release>/<project>/main.exe
 ```
 
-```bash
-# FFmpeg support
-git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
-cd ffmpeg
-git checkout release/6.0
-./configure --disable-all --disable-autodetect --disable-podpages --disable-asm --enable-avcodec --enable-avformat --enable-decoders --enable-encoders --enable-demuxers --enable-parsers --enable-protocol='file' --enable-swscale --enable-zlib
-make
-sudo make install
-```
-### (RT)OS support
-Works with any OS like pthred, Windows, FreeRTOS, etc. It has build in support for FreeRTOS. 
+For a DLL-dependent build, install `sdl2:x64-windows`, clean the project's existing CMake cache, and override the triplet:
 
-## Test
-This project is configured for [VSCode](https://code.visualstudio.com) and is tested on: 
-- Ubuntu Linux 
-- Windows WSL (Ubuntu Linux)
-
-It requires a working version of GCC, GDB and make in your path.
-
-To allow debugging inside VSCode you will also require a GDB [extension](https://marketplace.visualstudio.com/items?itemName=webfreak.debug) or other suitable debugger. All the requirements, build and debug settings have been pre-configured in the [.workspace](simulator.code-workspace) file.
-
-The project can use **SDL** but it can be easily relaced by any other built-in LVGL dirvers.
-
-## Integration with LVGL Pro
-
-This project supports integration with LVGL Pro projects for UI development.
-
-### Setup
-
-1. Configure CMake with your LVGL Pro project folder:
-
-```bash
-cmake -B build -DLVGL_PRO_PROJECT_DIR=<path-to-lvgl-pro-project>
+```powershell
+..\vcpkg\vcpkg.exe install sdl2:x64-windows
+.\clean.bat HAIR_DRYER
+$env:VCPKG_TARGET_TRIPLET = "x64-windows"
+.\build.bat HAIR_DRYER Debug
+Remove-Item Env:VCPKG_TARGET_TRIPLET
 ```
 
-Build your project:
+Static and dynamic triplets must not reuse the same CMake cache. See [docs/STANDALONE.md](docs/STANDALONE.md) for the runtime distinction and [docs/BUILD.md](docs/BUILD.md) for all targets and manual CMake commands.
 
-```bash
-cmake --build build
-```
+## Submodule Development
 
-### Usage in Code
+Changes under `projects/*`, `lvgl/`, or `FreeRTOS/` belong to their respective repositories. Commit and push a submodule change first, then update the root repository's gitlink. Do not record a submodule commit that is unavailable from its remote.
 
-In your main.c, include the UI header from your LVGL Pro project and replace the default demo with your screen.
+## Documentation
 
-```c
-#include "ui.h"
-
-int main(void) {
-
-    /*Initialization code for LVGL*/
-    
-    /* Initialize the LVGL Pro UI */
-    ui_init("<path-to-lvgl-pro-project>");
-    
-    /* ... rest of your application ...*/
-}
-```
+- [Build guide](docs/BUILD.md)
+- [Standalone and dependent builds](docs/STANDALONE.md)
+- [Runtime controls and integration APIs](docs/USE.md)
+- [中文构建说明](docs/%E6%9E%84%E5%BB%BA%E8%AF%B4%E6%98%8E.md)
+- [中文使用说明](docs/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.md)

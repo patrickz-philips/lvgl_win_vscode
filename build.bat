@@ -46,6 +46,7 @@ set BUILD_TYPE=%2
 REM Set defaults if not provided
 if "%PROJECT%"=="" set PROJECT=HAIR_DRYER
 if "%BUILD_TYPE%"=="" set BUILD_TYPE=Debug
+if "%VCPKG_TARGET_TRIPLET%"=="" set VCPKG_TARGET_TRIPLET=x64-windows-static
 
 REM Validate PROJECT
 if /i not "%PROJECT%"=="HAIR_DRYER" if /i not "%PROJECT%"=="SMART_SHAVER" if /i not "%PROJECT%"=="CHEETAH" if /i not "%PROJECT%"=="SLIDE_PLAYER" if /i not "%PROJECT%"=="BATTERY_MONITOR" if /i not "%PROJECT%"=="ACC_DATA" (
@@ -93,6 +94,7 @@ echo.
 echo Configuration:
 echo   Project:     %PROJECT%
 echo   Build Type:  %BUILD_TYPE%
+echo   Triplet:     %VCPKG_TARGET_TRIPLET%
 echo   Build Dir:   build\%BUILD_TYPE%\%PROJECT_LOWER%
 echo   Output Dir:  bin\%BUILD_TYPE%\%PROJECT_LOWER%
 echo.
@@ -137,7 +139,7 @@ set "VCPKG_TOOLCHAIN=%~dp0..\vcpkg\scripts\buildsystems\vcpkg.cmake"
 cmake -B "%BUILD_DIR%" ^
     -DCMAKE_BUILD_TYPE=%BUILD_TYPE% ^
     -DSELECTED_PROJECT=%PROJECT% ^
-    -DVCPKG_TARGET_TRIPLET=x64-windows-static ^
+    -DVCPKG_TARGET_TRIPLET=%VCPKG_TARGET_TRIPLET% ^
     -DCMAKE_TOOLCHAIN_FILE="%VCPKG_TOOLCHAIN%"
 
 if errorlevel 1 (

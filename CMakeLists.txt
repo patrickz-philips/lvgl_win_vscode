@@ -2,15 +2,11 @@ cmake_minimum_required(VERSION 3.12.4)
 
 # vcpkg support - set toolchain file before project()
 if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
-    set(_VCPKG_CMAKE_WORKSPACE "${CMAKE_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake")
-    if(EXISTS "${_VCPKG_CMAKE_WORKSPACE}")
-        set(CMAKE_TOOLCHAIN_FILE "${_VCPKG_CMAKE_WORKSPACE}"
+    set(_VCPKG_CMAKE "${CMAKE_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake")
+    if(EXISTS "${_VCPKG_CMAKE}")
+        set(CMAKE_TOOLCHAIN_FILE "${_VCPKG_CMAKE}"
             CACHE STRING "Vcpkg toolchain file")
-        message(STATUS "Using vcpkg toolchain (workspace): ${CMAKE_TOOLCHAIN_FILE}")
-    elseif(EXISTS "${CMAKE_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake")
-        set(CMAKE_TOOLCHAIN_FILE "${CMAKE_SOURCE_DIR}/../vcpkg/scripts/buildsystems/vcpkg.cmake"
-            CACHE STRING "Vcpkg toolchain file")
-        message(STATUS "Using vcpkg toolchain (legacy): ${CMAKE_TOOLCHAIN_FILE}")
+        message(STATUS "Using sibling vcpkg toolchain: ${CMAKE_TOOLCHAIN_FILE}")
     endif()
 endif()
 
@@ -35,10 +31,6 @@ option(USE_FREERTOS "Enable FreeRTOS" OFF) # Turn this on to enable FreeRTOS
 # Options: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA
 set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build")
 set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER" "CHEETAH" "SLIDE_PLAYER" "BATTERY_MONITOR" "ACC_DATA")
-
-# Widget screen size configuration (can be overridden when configuring CMake)
-set(WIDGET_SCREEN_WIDTH "320" CACHE STRING "Widget screen width (pixels)")
-set(WIDGET_SCREEN_HEIGHT "480" CACHE STRING "Widget screen height (pixels)")
 
 if(USE_FREERTOS)
     message(STATUS "FreeRTOS is enabled")
@@ -176,8 +168,8 @@ if(SELECTED_PROJECT STREQUAL "HAIR_DRYER")
 elseif(SELECTED_PROJECT STREQUAL "SMART_SHAVER")
     message(STATUS "Building Smart Shaver Project")
     add_compile_definitions(PROJECT_SMART_SHAVER)
-    list(APPEND MAIN_SOURCES smart_shaver/src/smart_shaver.c)
-    include_directories(${PROJECT_SOURCE_DIR}/smart_shaver/inc)
+    list(APPEND MAIN_SOURCES ${PROJECTS_DIR}/smart_shaver/src/smart_shaver.c)
+    include_directories(${PROJECTS_DIR}/smart_shaver/inc)
 elseif(SELECTED_PROJECT STREQUAL "CHEETAH")
     message(STATUS "Building Cheetah Project")
     add_compile_definitions(PROJECT_CHEETAH)
@@ -206,12 +198,6 @@ elseif(SELECTED_PROJECT STREQUAL "CHEETAH")
         ${PROJECTS_DIR}/cheetah/assets/lock-icon.c
     )
 
-    # If widget size wasn't explicitly overridden, default Cheetah to 96x96
-    if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
-        set(WIDGET_SCREEN_WIDTH "96" CACHE STRING "Widget screen width (pixels)" FORCE)
-        set(WIDGET_SCREEN_HEIGHT "96" CACHE STRING "Widget screen height (pixels)" FORCE)
-        message(STATUS "Cheetah default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
-    endif()
 elseif(SELECTED_PROJECT STREQUAL "SLIDE_PLAYER")
     message(STATUS "Building Slide Player Project")
     add_compile_definitions(PROJECT_SLIDE_PLAYER)
@@ -226,35 +212,18 @@ elseif(SELECTED_PROJECT STREQUAL "SLIDE_PLAYER")
     endif()
     list(APPEND MAIN_SOURCES ${SLIDE_PLAYER_ASSET_SOURCES})
 
-    # If widget size wasn't explicitly overridden, default Slide Player to 466x466.
-    if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
-        set(WIDGET_SCREEN_WIDTH "466" CACHE STRING "Widget screen width (pixels)" FORCE)
-        set(WIDGET_SCREEN_HEIGHT "466" CACHE STRING "Widget screen height (pixels)" FORCE)
-        message(STATUS "Slide Player default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
-    endif()
 elseif(SELECTED_PROJECT STREQUAL "BATTERY_MONITOR")
     message(STATUS "Building Battery Monitor Project")
     add_compile_definitions(PROJECT_BATTERY_MONITOR)
     list(APPEND MAIN_SOURCES ${PROJECTS_DIR}/battery_monitor/src/battery_monitor.c)
     include_directories(${PROJECTS_DIR}/battery_monitor/inc)
 
-    # Battery Monitor uses a 410x502 portrait widget size unless overridden.
-    if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
-        set(WIDGET_SCREEN_WIDTH "410" CACHE STRING "Widget screen width (pixels)" FORCE)
-        set(WIDGET_SCREEN_HEIGHT "502" CACHE STRING "Widget screen height (pixels)" FORCE)
-        message(STATUS "Battery Monitor default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
-    endif()
 elseif(SELECTED_PROJECT STREQUAL "ACC_DATA")
     message(STATUS "Building Accelerometer Data Project")
     add_compile_definitions(PROJECT_ACC_DATA)
     list(APPEND MAIN_SOURCES ${PROJECTS_DIR}/acc_data/src/acc_data.c)
     include_directories(${PROJECTS_DIR}/acc_data/inc)
 
-    if(WIDGET_SCREEN_WIDTH STREQUAL "320" AND WIDGET_SCREEN_HEIGHT STREQUAL "480")
-        set(WIDGET_SCREEN_WIDTH "410" CACHE STRING "Widget screen width (pixels)" FORCE)
-        set(WIDGET_SCREEN_HEIGHT "502" CACHE STRING "Widget screen height (pixels)" FORCE)
-        message(STATUS "Accelerometer Data default widget size: ${WIDGET_SCREEN_WIDTH}x${WIDGET_SCREEN_HEIGHT}")
-    endif()
 else()
     message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}")
 endif()
@@ -334,11 +303,7 @@ if(LVGL_PRO_PROJECT_DIR)
 endif()
 
 add_executable(main ${MAIN_SOURCES})
-target_compile_definitions(main PRIVATE
-    LV_CONF_INCLUDE_SIMPLE
-    WIDGET_SCREEN_WIDTH=${WIDGET_SCREEN_WIDTH}
-    WIDGET_SCREEN_HEIGHT=${WIDGET_SCREEN_HEIGHT}
-)
+target_compile_definitions(main PRIVATE LV_CONF_INCLUDE_SIMPLE)
 target_link_libraries(main ${MAIN_LIBS})
 
 # Disable automatic DLL copying for static builds

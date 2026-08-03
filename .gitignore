@@ -4,17 +4,11 @@ bin/
 
 # Ignore all dot folders, with below exceptions
 .*/
+!.github/
+!.github/**
 
 # VSCode
 .vscode
 
 # MacOS file
 .DS_Store
-
-# Ignore product directories
-smart_shaver/
-projects/acc_data/
-projects/battery_monitor/
-projects/hair_dryer/
-projects/cheetah/
-projects/slide_player/

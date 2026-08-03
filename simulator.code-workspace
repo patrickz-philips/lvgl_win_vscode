@@ -24,9 +24,11 @@
 		"files.insertFinalNewline": true,
 		"files.trimFinalNewlines": true,
 		"cmake.configureOnOpen": true,
+		"cmake.buildDirectory": "${workspaceFolder}/build/${buildType}/hair_dryer",
 		"cmake.configureSettings": {
-			"CMAKE_TOOLCHAIN_FILE": "D:/vcpkg/scripts/buildsystems/vcpkg.cmake",
-			"VCPKG_TARGET_TRIPLET": "x64-mingw-static"
+			"CMAKE_TOOLCHAIN_FILE": "${workspaceFolder}/../vcpkg/scripts/buildsystems/vcpkg.cmake",
+			"VCPKG_TARGET_TRIPLET": "x64-windows-static",
+			"SELECTED_PROJECT": "HAIR_DRYER"
 		},
 		"files.associations": {
 			"glob.h": "c",
@@ -44,10 +46,12 @@
 		"version": "2.0.0",
 		"tasks": [
 			{
-				"label": "Build",
-				"command": "cmake",
+				"label": "Build HAIR_DRYER Debug",
+				"type": "shell",
+				"command": "${workspaceFolder}/build.bat",
 				"args": [
-					"--build", "${command:cmake.buildDirectory}"
+					"HAIR_DRYER",
+					"Debug"
 				],
 				"group": {
 					"kind": "build",
@@ -67,14 +71,18 @@
 				}
 			},
 			{
-				"label": "Build and Run",
+				"label": "Run HAIR_DRYER Debug",
 				"type": "shell",
-				"command": "${workspaceFolder}/bin/main.exe",
+				"command": "${workspaceFolder}/run.bat",
+				"args": [
+					"HAIR_DRYER",
+					"Debug"
+				],
 				"group": {
 					"kind": "test",
 					"isDefault": true
 				},
-				"dependsOn": "Build"
+				"dependsOn": "Build HAIR_DRYER Debug"
 			}
 		],
 	},
@@ -86,10 +94,10 @@
 				"name": "Debug LVGL demo with gdb",
 				"type": "cppdbg",
 				"request": "launch",
-		        "program": "${workspaceFolder}/bin/Debug/main.exe",
+		        "program": "${workspaceFolder}/bin/Debug/hair_dryer/main.exe",
 				"args": [],
 				"cwd": "${workspaceFolder}",
-				"preLaunchTask": "Build",
+				"preLaunchTask": "Build HAIR_DRYER Debug",
 				"stopAtEntry": false,
 				"linux": {
 					"MIMode": "gdb",
@@ -100,17 +108,17 @@
 				  },
 				  "windows": {
 					"MIMode": "gdb",
-					"miDebuggerPath": "C:\\Program Files\\mingw64\\bin\\gdb.exe"
+					"miDebuggerPath": "gdb.exe"
 				  }
 			},
 			{
 				"name": "Debug LVGL demo with LLVM",
 				"type": "cppdbg",
 				"request": "launch",
-		        "program": "${workspaceFolder}/bin/Debug/main.exe",
+		        "program": "${workspaceFolder}/bin/Debug/hair_dryer/main.exe",
 				"args": [],
 				"cwd": "${workspaceFolder}",
-				"preLaunchTask": "Build",
+				"preLaunchTask": "Build HAIR_DRYER Debug",
 				"stopAtEntry": false,
 				"MIMode": "lldb"
 			},
