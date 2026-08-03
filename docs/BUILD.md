@@ -1,4 +1,181 @@
-# LVGL 项目构建指南
+# Build Guide
+
+This document describes the Windows build flow implemented by the root CMake project and batch scripts. For application controls and module APIs, see [USE.md](USE.md).
+
+## Supported Projects
+
+| Project argument | Module | Default window |
+| --- | --- | --- |
+| `HAIR_DRYER` | Hair dryer controls and LED animation | 800 x 720 |
+| `CHEETAH` | Compact numeric widget | 96 x 96 |
+| `SLIDE_PLAYER` | 32-image slide viewer | 466 x 466 |
+| `BATTERY_MONITOR` | Two-page battery status viewer | 410 x 502 |
+| `ACC_DATA` | Three-axis accelerometer chart | 410 x 502 |
+
+`SMART_SHAVER` is still accepted by the legacy script and CMake selection lists, but its source directory is not present. It is not a buildable project in this checkout.
+
+## Prerequisites
+
+- Windows 10 or later.
+- CMake 3.12.4 or later available in `PATH`.
+- A C/C++ toolchain supported by CMake, such as Visual Studio Build Tools.
+- vcpkg in the sibling directory `..\vcpkg`.
+- SDL2 installed for the `x64-windows-static` triplet.
+- Python 3 and Pillow only when regenerating the Hair Dryer C asset.
+
+The build script always passes `..\vcpkg\scripts\buildsystems\vcpkg.cmake`; installing vcpkg elsewhere requires changing `VCPKG_TOOLCHAIN` in `build.bat` or configuring CMake manually.
+
+One possible vcpkg setup from the repository root is:
+
+```batch
+cd ..
+git clone https://github.com/microsoft/vcpkg.git
+vcpkg\bootstrap-vcpkg.bat
+vcpkg\vcpkg.exe install sdl2:x64-windows-static
+cd lvgl_win_vscode
+```
+
+Verify the required tools:
+
+```batch
+cmake --version
+..\vcpkg\vcpkg.exe list
+```
+
+## Build
+
+Run commands from the repository root:
+
+```batch
+build.bat [PROJECT] [Debug|Release]
+```
+
+Both arguments are optional. The default is `HAIR_DRYER Debug`. Arguments are case-insensitive.
+
+Examples:
+
+```batch
+build.bat
+build.bat CHEETAH Debug
+build.bat SLIDE_PLAYER Release
+build.bat BATTERY_MONITOR Debug
+build.bat ACC_DATA Release
+```
+
+The script configures an isolated CMake tree, then builds the `main` executable. Generated files are separated by configuration and project:
+
+```text
+build/<Debug|Release>/<project>/
+bin/<Debug|Release>/<project>/main.exe
+```
+
+For example, `build.bat ACC_DATA Debug` creates `bin\Debug\acc_data\main.exe`.
+
+### Hair Dryer Assets
+
+Debug builds load `projects/hair_dryer/assets/hair_dryer.png` at runtime. Run them through `run.bat` so the process starts in the repository root.
+
+Release builds compile `projects/hair_dryer/assets/hair_dryer.c` into the executable. If that file is missing, `build.bat` runs the converter before CMake configuration:
+
+```batch
+python -m pip install pillow
+python projects\hair_dryer\assets\convert_image.py
+```
+
+The current checkout already contains the generated C file. `CHEETAH` and `SLIDE_PLAYER` compile their image C files into the executable in both configurations. Slide Player configuration fails when no numbered C assets exist under `projects/slide_player/assets`.
+
+## Run
+
+Build and run the same project/configuration pair:
+
+```batch
+run.bat BATTERY_MONITOR Debug
+```
+
+`run.bat` checks for `bin\<configuration>\<project>\main.exe` and starts it with the repository root as the working directory. See [USE.md](USE.md) for controls and data APIs.
+
+## Clean
+
+```batch
+clean.bat [TARGET]
+```
+
+Targets are case-insensitive:
+
+| Target | Removed paths |
+| --- | --- |
+| `all` or no argument | Entire `build` and `bin` directories |
+| `build` | Entire `build` directory |
+| `bin` | Entire `bin` directory |
+| A project argument | That project's Debug and Release directories under both `build` and `bin` |
+
+Examples:
+
+```batch
+clean.bat ACC_DATA
+clean.bat build
+clean.bat all
+```
+
+## Manual CMake Build
+
+Use a separate build directory for each project and configuration. The following is equivalent to the scripted Hair Dryer Debug build:
+
+```batch
+cmake -B build\Debug\hair_dryer ^
+  -DCMAKE_BUILD_TYPE=Debug ^
+  -DSELECTED_PROJECT=HAIR_DRYER ^
+  -DVCPKG_TARGET_TRIPLET=x64-windows-static ^
+  -DCMAKE_TOOLCHAIN_FILE="..\vcpkg\scripts\buildsystems\vcpkg.cmake"
+cmake --build build\Debug\hair_dryer --config Debug -j
+```
+
+Useful optional CMake settings include:
+
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| `USE_FREERTOS` | `OFF` | Build the experimental FreeRTOS host path |
+| `LVGL_PRO_PROJECT_DIR` | Empty | Add an LVGL Pro project containing a `CMakeLists.txt` |
+| `LV_USE_LIBPNG` | `OFF` | Link libpng from the toolchain |
+| `LV_USE_LIBJPEG_TURBO` | `OFF` | Link libjpeg-turbo from the toolchain |
+| `LV_USE_FREETYPE` | `OFF` | Link FreeType from the toolchain |
+
+The normal project builds disable LVGL examples, demos, and internal ThorVG. Window sizes are defined by the selected module headers; changing them requires keeping the module layout and CMake definitions consistent.
+
+## Troubleshooting
+
+### CMake is not found
+
+Install CMake, reopen the terminal, and verify `cmake --version`. `build.bat` stops before configuration when CMake is absent from `PATH`.
+
+### The vcpkg toolchain file is missing
+
+Confirm `..\vcpkg\scripts\buildsystems\vcpkg.cmake` exists relative to the repository root.
+
+### SDL2 is not found
+
+Install the exact triplet used by the scripts:
+
+```batch
+..\vcpkg\vcpkg.exe install sdl2:x64-windows-static
+```
+
+### CMake reuses stale project settings
+
+Each project has its own cache. Remove only the affected project and rebuild:
+
+```batch
+clean.bat SLIDE_PLAYER
+build.bat SLIDE_PLAYER Debug
+```
+
+### Hair Dryer image conversion fails
+
+Install Pillow with the same Python interpreter used by the script, then rerun the build. A conversion failure does not stop the build, but Release falls back to filesystem loading when the generated C asset is unavailable.
+
+### The executable is missing
+
+The project and configuration passed to `run.bat` must match the successful build. Check the expected path under `bin`, or rebuild that exact pair.# LVGL 项目构建指南
 
 ## 📁 目录结构
 
@@ -45,13 +222,11 @@ build.bat [PROJECT] [BUILD_TYPE]
 ```
 
 **参数：**
-- `PROJECT`: 项目名称
   - `HAIR_DRYER` (默认)
   - `SMART_SHAVER`
   - `CHEETAH`
   - `SLIDE_PLAYER`
   - `BATTERY_MONITOR`
-- `BUILD_TYPE`: 构建类型
   - `Debug` (默认)
   - `Release`
 
@@ -108,14 +283,6 @@ clean.bat [TARGET]
 ```
 
 **参数：**
-- `all` (默认) - 清理所有构建文件和输出文件
-- `build` - 仅清理构建临时文件
-- `bin` - 仅清理输出文件
-- `HAIR_DRYER` - 仅清理 Hair Dryer 项目
-- `SMART_SHAVER` - 仅清理 Smart Shaver 项目
-- `CHEETAH` - 仅清理 Cheetah 项目
-- `SLIDE_PLAYER` - 仅清理 Slide Player 项目
-- `BATTERY_MONITOR` - 仅清理 Battery Monitor 项目
 
 **示例：**
 ```batch
@@ -144,33 +311,18 @@ clean.bat BATTERY_MONITOR
 ### Debug vs Release 构建
 
 #### Debug 模式
-- **编译优化**: 关闭优化，保留调试符号
-- **资源加载**: 动态从文件系统加载资源（如图片）
-- **优点**: 快速编译，便于调试
-- **输出**: `bin/Debug/<project>/main.exe`
 
 #### Release 模式
-- **编译优化**: 开启优化，移除调试信息
-- **资源加载**: 静态编译资源到可执行文件（Hair Dryer项目）
-- **优点**: 更小体积，更快运行速度
-- **输出**: `bin/Release/<project>/main.exe`
 
 ### 项目特定配置
 
 #### Hair Dryer 项目
-- Debug模式：从 `projects/hair_dryer/assets/` 加载 `hair_dryer.png`
-- Release模式：使用静态编译的 `projects/hair_dryer/assets/hair_dryer.c`
   - 如果不存在，自动运行 `convert_image.py` 转换图片
   - 需要 Python 和 Pillow 库
 
 #### Smart Shaver 项目
-- 标准构建流程
-- 无特殊资源编译需求
 
 #### Battery Monitor 项目
-- 标准构建流程
-- 两页电量监视信息，支持左右滑动切换
-- 可通过 `battery_monitor_set_data()` 更新显示数据
 
 ## 🔧 编译优化
 
@@ -179,28 +331,16 @@ clean.bat BATTERY_MONITOR
 本项目已优化CMake配置，**仅编译必要的LVGL组件**：
 
 ✅ **编译的组件：**
-- LVGL 核心库
-- SDL2 支持
 
 ❌ **不编译的组件：**
-- LVGL Examples（示例代码）
-- LVGL Demos（演示程序）
-- ThorVG（矢量图形库）
 
 **优势：**
-- ⚡ 更快的编译速度
-- 💾 更小的输出文件
-- 🎯 只包含项目所需的代码
 
 ## 📦 依赖要求
 
 ### 必需依赖
-- **CMake** >= 3.12.4
-- **C/C++ 编译器**（MSVC、MinGW或Clang）
-- **SDL2** 库（通过vcpkg安装）
 
 ### 可选依赖
-- **Python 3** + **Pillow** - 用于 Hair Dryer Release 模式的图片转换
 
 ### 安装SDL2（使用vcpkg）
 ```batch
@@ -310,9 +450,6 @@ cmake -B build/Debug/hair_dryer ^
 
 ## 📚 相关文档
 
-- [BUILD_STANDALONE.md](BUILD_STANDALONE.md) - 独立构建指南
-- [PROJECT_SELECTION.md](PROJECT_SELECTION.md) - 项目选择说明
-- [projects/hair_dryer/assets/README.md](projects/hair_dryer/assets/README.md) - Hair Dryer资源说明
 
 ## 💡 最佳实践
 
@@ -324,10 +461,6 @@ cmake -B build/Debug/hair_dryer ^
 ## 🎓 总结
 
 通过新的构建系统，你可以：
-- ✅ 清晰分离不同项目的构建文件
-- ✅ 轻松切换 Debug/Release 模式
-- ✅ 快速构建（仅编译必要的库）
-- ✅ 方便地清理和重建
 
 祝编码愉快！ 🚀
 
