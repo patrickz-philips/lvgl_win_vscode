@@ -1,6 +1,6 @@
 # Build Guide
 
-This guide describes the Windows build flow implemented by the root CMake project and batch scripts. Runtime controls and public module APIs are documented in [USE.md](USE.md). Static and DLL-dependent builds are compared in [STANDALONE.md](STANDALONE.md).
+This guide covers the build flow for both Windows and macOS. Runtime controls and public module APIs are documented in [USE.md](USE.md). Static and dependency-linked builds are compared in [STANDALONE.md](STANDALONE.md).
 
 ## Repository Layout
 
@@ -32,6 +32,8 @@ Each module declares its simulator dimensions in its public header. `src/main.c`
 
 ## Prerequisites
 
+### Windows
+
 - Windows 10 or later.
 - CMake 3.12.4 or later in `PATH`.
 - A C/C++ toolchain supported by CMake, such as Visual Studio Build Tools.
@@ -43,7 +45,6 @@ Expected directory layout:
 
 ```text
 lvgl_projects/
-|-- lvgl_win_vscode/
 `-- vcpkg/
 ```
 
@@ -53,7 +54,36 @@ Install the default SDL2 package from the repository root:
 ..\vcpkg\vcpkg.exe install sdl2:x64-windows-static
 ```
 
+### macOS
+
+- macOS 12 or later.
+- Xcode Command Line Tools: `xcode-select --install`
+- CMake 3.12.4 or later: `brew install cmake`
+- vcpkg in the sibling directory `../vcpkg`.
+- SDL2 installed for the detected triplet (Apple Silicon uses `arm64-osx`; Intel uses `x64-osx`).
+
+Expected directory layout:
+
+```text
+lvgl_projects/
+`-- vcpkg/
+```
+
+Install SDL2 from the repository root (Apple Silicon):
+
+```bash
+../vcpkg/vcpkg install sdl2:arm64-osx
+```
+
+For Intel Mac:
+
+```bash
+../vcpkg/vcpkg install sdl2:x64-osx
+```
+
 ## Scripted Build
+
+### Windows
 
 Run commands from the repository root:
 
@@ -87,17 +117,53 @@ build/<Debug|Release>/<project>/
 bin/<Debug|Release>/<project>/main.exe
 ```
 
+### macOS
+
+Run commands from the repository root:
+
+```bash
+./build.sh [PROJECT] [Debug|Release]
+```
+
+Both arguments are optional. The default is `HAIR_DRYER Debug`; arguments are case-insensitive.
+
+```bash
+./build.sh SMART_SHAVER Debug
+./build.sh CHEETAH Debug
+./build.sh SLIDE_PLAYER Release
+./build.sh BATTERY_MONITOR Debug
+./build.sh ACC_DATA Release
+```
+
+The triplet is auto-detected (`arm64-osx` on Apple Silicon, `x64-osx` on Intel). Override with `VCPKG_TARGET_TRIPLET` if needed. Clean before switching triplets.
+
+Build and executable outputs:
+
+```text
+build/<Debug|Release>/<project>/
+bin/<Debug|Release>/<project>/main
+```
+
 ## Run
 
-Build and run the same project/configuration pair:
+Build and run the same project/configuration pair.
 
+**Windows:**
 ```powershell
 .\run.bat BATTERY_MONITOR Debug
 ```
 
-`run.bat` starts the executable with the repository root as its working directory. This is required for runtime assets that use repository-relative paths.
+**macOS:**
+```bash
+./run.sh BATTERY_MONITOR Debug
+```
+
+Both scripts start the executable with the repository root as the working directory, which is required for runtime assets that use repository-relative paths.
 
 ## Clean
+
+**Windows:** `.\clean.bat [TARGET]`  
+**macOS:** `./clean.sh [TARGET]`
 
 ```powershell
 .\clean.bat [TARGET]
@@ -112,13 +178,26 @@ Build and run the same project/configuration pair:
 
 ## Manual CMake Build
 
-Use a separate build directory for every project, configuration, and vcpkg triplet. This is equivalent to the default Hair Dryer Debug build:
+Use a separate build directory for every project, configuration, and vcpkg triplet.
+
+**Windows** (default Hair Dryer Debug):
 
 ```powershell
 cmake -S . -B build/Debug/hair_dryer `
   -DCMAKE_BUILD_TYPE=Debug `
   -DSELECTED_PROJECT=HAIR_DRYER `
   -DVCPKG_TARGET_TRIPLET=x64-windows-static `
+  -DCMAKE_TOOLCHAIN_FILE="../vcpkg/scripts/buildsystems/vcpkg.cmake"
+cmake --build build/Debug/hair_dryer --config Debug -j
+```
+
+**macOS / Apple Silicon** (default Hair Dryer Debug):
+
+```bash
+cmake -S . -B build/Debug/hair_dryer \
+  -DCMAKE_BUILD_TYPE=Debug \
+  -DSELECTED_PROJECT=HAIR_DRYER \
+  -DVCPKG_TARGET_TRIPLET=arm64-osx \
   -DCMAKE_TOOLCHAIN_FILE="../vcpkg/scripts/buildsystems/vcpkg.cmake"
 cmake --build build/Debug/hair_dryer --config Debug -j
 ```
@@ -168,10 +247,17 @@ Confirm `../vcpkg/scripts/buildsystems/vcpkg.cmake` exists relative to the repos
 
 ### SDL2 not found
 
-Install SDL2 for the exact triplet shown by `build.bat`:
+**Windows** — install SDL2 for the triplet shown by `build.bat`:
 
 ```powershell
 ..\vcpkg\vcpkg.exe install sdl2:x64-windows-static
+```
+
+**macOS** — install for the detected triplet:
+
+```bash
+../vcpkg/vcpkg install sdl2:arm64-osx   # Apple Silicon
+../vcpkg/vcpkg install sdl2:x64-osx     # Intel
 ```
 
 ### Stale CMake configuration

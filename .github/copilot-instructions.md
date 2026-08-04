@@ -17,8 +17,8 @@
 
 - Run commands from the repository root.
 - Keep vcpkg in the sibling directory `../vcpkg`; never add machine-specific absolute paths.
-- Build the affected application with `build.bat <PROJECT> <Debug|Release>` or the equivalent CMake commands in `docs/BUILD.md`.
-- Run with the same project and configuration using `run.bat <PROJECT> <Debug|Release>`.
+- Build the affected application with `build.bat <PROJECT> <Debug|Release>` on Windows or `./build.sh <PROJECT> <Debug|Release>` on macOS, or the equivalent CMake commands in `docs/BUILD.md`.
+- Run with the same project and configuration using `run.bat <PROJECT> <Debug|Release>` on Windows or `./run.sh <PROJECT> <Debug|Release>` on macOS.
 - Validate the narrowest affected target after a code or build-system change.
 
 See `docs/BUILD.md` for supported targets and `docs/USE.md` for runtime and API contracts.

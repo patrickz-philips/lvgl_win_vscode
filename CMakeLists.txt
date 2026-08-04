@@ -10,9 +10,17 @@ if(NOT DEFINED CMAKE_TOOLCHAIN_FILE)
     endif()
 endif()
 
-# Default to static triplet if not specified
+# Auto-select static triplet by platform; Windows is the default
 if(NOT DEFINED VCPKG_TARGET_TRIPLET)
-    set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "Vcpkg target triplet")
+    if(CMAKE_SYSTEM_NAME STREQUAL "Darwin")
+        if(CMAKE_SYSTEM_PROCESSOR MATCHES "arm64|aarch64")
+            set(VCPKG_TARGET_TRIPLET "arm64-osx" CACHE STRING "Vcpkg target triplet")
+        else()
+            set(VCPKG_TARGET_TRIPLET "x64-osx" CACHE STRING "Vcpkg target triplet")
+        endif()
+    else()
+        set(VCPKG_TARGET_TRIPLET "x64-windows-static" CACHE STRING "Vcpkg target triplet")
+    endif()
 endif()
 message(STATUS "Using vcpkg triplet: ${VCPKG_TARGET_TRIPLET}")
 
@@ -110,6 +118,9 @@ if(VCPKG_TARGET_TRIPLET MATCHES ".*-static$")
     message(STATUS "Using static SDL2 library")
 endif()
 find_package(SDL2 REQUIRED)
+
+# All SDL host builds are simulator targets; hardware builds omit this flag
+add_compile_definitions(LV_SIMULATOR=1)
 
 # Add compile definitions based on the selected options
 add_compile_definitions($<$<BOOL:${LV_USE_DRAW_SDL}>:LV_USE_DRAW_SDL=1>)
