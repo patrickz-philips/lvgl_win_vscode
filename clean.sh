@@ -58,9 +58,12 @@ case "$target_lower" in
     acc_data)
         clean_project "acc_data"
         ;;
+    algorithm_animation)
+        clean_project "algorithm_animation"
+        ;;
     *)
         echo "ERROR: Unknown target '$target'"
-        echo "Valid targets: all, build, bin, HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA"
+        echo "Valid targets: all, build, bin, HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA, ALGORITHM_ANIMATION"
         exit 1
         ;;
 esac

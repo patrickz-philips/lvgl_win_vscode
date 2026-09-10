@@ -36,9 +36,9 @@ set(LVGL_PRO_PROJECT_DIR
 option(USE_FREERTOS "Enable FreeRTOS" OFF) # Turn this on to enable FreeRTOS
 
 # Project Selection: Choose which project to build
-# Options: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA
+# Options: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA, ALGORITHM_ANIMATION
 set(SELECTED_PROJECT "HAIR_DRYER" CACHE STRING "Select project to build")
-set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER" "CHEETAH" "SLIDE_PLAYER" "BATTERY_MONITOR" "ACC_DATA")
+set_property(CACHE SELECTED_PROJECT PROPERTY STRINGS "HAIR_DRYER" "SMART_SHAVER" "CHEETAH" "SLIDE_PLAYER" "BATTERY_MONITOR" "ACC_DATA" "ALGORITHM_ANIMATION")
 
 if(USE_FREERTOS)
     message(STATUS "FreeRTOS is enabled")
@@ -234,6 +234,16 @@ elseif(SELECTED_PROJECT STREQUAL "ACC_DATA")
     add_compile_definitions(PROJECT_ACC_DATA)
     list(APPEND MAIN_SOURCES ${PROJECTS_DIR}/acc_data/src/acc_data.c)
     include_directories(${PROJECTS_DIR}/acc_data/inc)
+
+elseif(SELECTED_PROJECT STREQUAL "ALGORITHM_ANIMATION")
+    message(STATUS "Building Algorithm Animation Project")
+    add_compile_definitions(PROJECT_ALGORITHM_ANIMATION)
+    list(APPEND MAIN_SOURCES
+        ${PROJECTS_DIR}/algorithm_animation/src/algorithm_animation.c
+        ${PROJECTS_DIR}/algorithm_animation/src/algorithm_animation_model.c
+        ${PROJECTS_DIR}/algorithm_animation/src/algorithm_animation_view.c
+    )
+    include_directories(${PROJECTS_DIR}/algorithm_animation/inc)
 
 else()
     message(FATAL_ERROR "Invalid project selection: ${SELECTED_PROJECT}")

@@ -38,9 +38,13 @@ normalize_project() {
             PROJECT="ACC_DATA"
             PROJECT_LOWER="acc_data"
             ;;
+        ALGORITHM_ANIMATION)
+            PROJECT="ALGORITHM_ANIMATION"
+            PROJECT_LOWER="algorithm_animation"
+            ;;
         *)
             echo "ERROR: Invalid project '$input'"
-            echo "Valid projects: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA"
+            echo "Valid projects: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA, ALGORITHM_ANIMATION"
             return 1
             ;;
     esac

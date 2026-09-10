@@ -35,10 +35,11 @@ if /i "%TARGET%"=="CHEETAH" goto CLEAN_CHEETAH
 if /i "%TARGET%"=="SLIDE_PLAYER" goto CLEAN_SLIDE_PLAYER
 if /i "%TARGET%"=="BATTERY_MONITOR" goto CLEAN_BATTERY_MONITOR
 if /i "%TARGET%"=="ACC_DATA" goto CLEAN_ACC_DATA
+if /i "%TARGET%"=="ALGORITHM_ANIMATION" goto CLEAN_ALGORITHM_ANIMATION
 
 echo ERROR: Unknown target "%TARGET%"
 echo.
-echo Valid targets: all, build, bin, HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA
+echo Valid targets: all, build, bin, HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA, ALGORITHM_ANIMATION
 echo.
 pause
 exit /b 1
@@ -257,6 +258,29 @@ for %%C in (Debug Release) do (
 )
 if "%CLEANED%"=="0" (
     echo No ACC_DATA artifacts found, skipping.
+) else (
+    echo Done.
+)
+goto END
+
+:CLEAN_ALGORITHM_ANIMATION
+echo Cleaning ALGORITHM_ANIMATION project...
+echo.
+set CLEANED=0
+for %%C in (Debug Release) do (
+    if exist "build\%%C\algorithm_animation" (
+        echo Removing build\%%C\algorithm_animation...
+        rmdir /s /q "build\%%C\algorithm_animation" 2^>nul
+        set CLEANED=1
+    )
+    if exist "bin\%%C\algorithm_animation" (
+        echo Removing bin\%%C\algorithm_animation...
+        rmdir /s /q "bin\%%C\algorithm_animation" 2^>nul
+        set CLEANED=1
+    )
+)
+if "%CLEANED%"=="0" (
+    echo No ALGORITHM_ANIMATION artifacts found, skipping.
 ) else (
     echo Done.
 )

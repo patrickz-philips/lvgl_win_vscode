@@ -58,3 +58,26 @@ When a hardware Model task needs to deliver data to the LVGL thread:
 - Consume the queue exclusively in an `lv_timer_t` callback on the LVGL thread; never call `lv_obj_*` directly from a FreeRTOS task.
 - Name the consumption timer `s_model_timer`; create it in the Model init with `lv_timer_create(<feature>_timer_cb, MODEL_TIMER_PERIOD_MS, NULL)`.
 - Under `#ifdef LV_SIMULATOR`, provide a no-op stub for every `model_post_*()` function so the Presenter compiles without FreeRTOS.
+
+## Simulator Window Layout
+
+### Small-Screen Projects
+
+- When a project's display is smaller than 320 × 320, wrap the SDL window creation in `src/main.c` with `SDL_SetWindowResizable(window, SDL_TRUE)` so the user can drag the window corner to scale the view at runtime.
+- Do not hard-code a zoom factor; let SDL handle scaling via the renderer logical size.
+
+### Physical-Button Emulation
+
+- When a project declares physical buttons (hardware keys such as power, mode, or menu), add a virtual-button strip **below** the display area inside the same SDL window under `#ifdef LV_SIMULATOR`.
+- Size the strip to match the display width; height is at least 48 px per button row.
+- Classify every physical button into exactly one of the four types and render it accordingly:
+
+| Type | Visual | Trigger |
+|------|--------|---------|
+| **slide button** | horizontal track with a draggable thumb | mouse drag along the track |
+| **option button** | segmented row of labeled segments | mouse click on a segment |
+| **state button** | toggle; shows current state as label | mouse click to flip |
+| **click button** | momentary push button | mouse press and release |
+
+- Map each virtual-button interaction to the same LVGL input-device event that the real hardware button would produce.
+- Keep all virtual-button code inside `#ifdef LV_SIMULATOR` / `#endif` so it is never compiled for hardware targets.

@@ -27,6 +27,7 @@ git submodule update --init --recursive
 | `SLIDE_PLAYER` | `projects/slide_player` | 466 x 466 |
 | `BATTERY_MONITOR` | `projects/battery_monitor` | 410 x 502 |
 | `ACC_DATA` | `projects/acc_data` | 410 x 502 |
+| `ALGORITHM_ANIMATION` | `projects/algorithm_animation` | 240 x 240 |
 
 Each module declares its simulator dimensions in its public header. `src/main.c` adapts module-specific names where necessary and falls back to 320 x 480 if a module provides no dimensions. CMake does not own screen dimensions.
 

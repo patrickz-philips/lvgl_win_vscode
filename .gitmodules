@@ -22,3 +22,6 @@
 [submodule "projects/smart_shaver"]
 	path = projects/smart_shaver
 	url = https://github.com/patrickzhang1024/lvgl_smart_shaver.git
+[submodule "projects/algorithm_animation"]
+	path = projects/algorithm_animation
+	url = https://github.com/patrickz-philips/lvgl_algorithm_animation.git

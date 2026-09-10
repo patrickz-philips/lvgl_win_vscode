@@ -4,7 +4,7 @@ REM Universal Build Script for LVGL Project
 REM ============================================================
 REM This script allows you to build any project in Debug or Release mode
 REM Usage: build.bat [PROJECT] [BUILD_TYPE]
-REM   PROJECT: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA (default: HAIR_DRYER)
+REM   PROJECT: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA, ALGORITHM_ANIMATION (default: HAIR_DRYER)
 REM   BUILD_TYPE: Debug, Release (default: Debug)
 REM
 REM Examples:
@@ -16,6 +16,7 @@ REM   build.bat CHEETAH Debug            - Build CHEETAH in Debug mode
 REM   build.bat SLIDE_PLAYER Debug       - Build SLIDE_PLAYER in Debug mode
 REM   build.bat BATTERY_MONITOR Debug    - Build BATTERY_MONITOR in Debug mode
 REM   build.bat ACC_DATA Debug           - Build ACC_DATA in Debug mode
+REM   build.bat ALGORITHM_ANIMATION Debug              - Build ALGORITHM_ANIMATION in Debug mode
 REM ============================================================
 
 setlocal enabledelayedexpansion
@@ -49,10 +50,10 @@ if "%BUILD_TYPE%"=="" set BUILD_TYPE=Debug
 if "%VCPKG_TARGET_TRIPLET%"=="" set VCPKG_TARGET_TRIPLET=x64-windows-static
 
 REM Validate PROJECT
-if /i not "%PROJECT%"=="HAIR_DRYER" if /i not "%PROJECT%"=="SMART_SHAVER" if /i not "%PROJECT%"=="CHEETAH" if /i not "%PROJECT%"=="SLIDE_PLAYER" if /i not "%PROJECT%"=="BATTERY_MONITOR" if /i not "%PROJECT%"=="ACC_DATA" (
+if /i not "%PROJECT%"=="HAIR_DRYER" if /i not "%PROJECT%"=="SMART_SHAVER" if /i not "%PROJECT%"=="CHEETAH" if /i not "%PROJECT%"=="SLIDE_PLAYER" if /i not "%PROJECT%"=="BATTERY_MONITOR" if /i not "%PROJECT%"=="ACC_DATA" if /i not "%PROJECT%"=="ALGORITHM_ANIMATION" (
     echo ERROR: Invalid project "%PROJECT%"
     echo.
-    echo Valid projects: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA
+    echo Valid projects: HAIR_DRYER, SMART_SHAVER, CHEETAH, SLIDE_PLAYER, BATTERY_MONITOR, ACC_DATA, ALGORITHM_ANIMATION
     echo.
     pause
     exit /b 1
@@ -75,6 +76,7 @@ if /i "%PROJECT%"=="CHEETAH" set PROJECT=CHEETAH
 if /i "%PROJECT%"=="SLIDE_PLAYER" set PROJECT=SLIDE_PLAYER
 if /i "%PROJECT%"=="BATTERY_MONITOR" set PROJECT=BATTERY_MONITOR
 if /i "%PROJECT%"=="ACC_DATA" set PROJECT=ACC_DATA
+if /i "%PROJECT%"=="ALGORITHM_ANIMATION" set PROJECT=ALGORITHM_ANIMATION
 if /i "%BUILD_TYPE%"=="Debug" set BUILD_TYPE=Debug
 if /i "%BUILD_TYPE%"=="Release" set BUILD_TYPE=Release
 
@@ -86,6 +88,7 @@ if /i "%PROJECT%"=="CHEETAH" set PROJECT_LOWER=cheetah
 if /i "%PROJECT%"=="SLIDE_PLAYER" set PROJECT_LOWER=slide_player
 if /i "%PROJECT%"=="BATTERY_MONITOR" set PROJECT_LOWER=battery_monitor
 if /i "%PROJECT%"=="ACC_DATA" set PROJECT_LOWER=acc_data
+if /i "%PROJECT%"=="ALGORITHM_ANIMATION" set PROJECT_LOWER=algorithm_animation
 
 echo ============================================================
 echo Building %PROJECT% Project - %BUILD_TYPE% Mode

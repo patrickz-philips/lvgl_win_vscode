@@ -39,6 +39,8 @@
   #include "battery_monitor.h"
 #elif defined(PROJECT_ACC_DATA)
   #include "acc_data.h"
+#elif defined(PROJECT_ALGORITHM_ANIMATION)
+  #include "algorithm_animation.h"
 #endif
 
 #if defined(PROJECT_SMART_SHAVER) && defined(SMART_SHAVER_SCREEN_WIDTH) && defined(SMART_SHAVER_SCREEN_HEIGHT)
@@ -47,6 +49,9 @@
 #elif defined(PROJECT_ACC_DATA) && defined(ACC_DATA_SCREEN_WIDTH) && defined(ACC_DATA_SCREEN_HEIGHT)
   #define WIDGET_SCREEN_WIDTH ACC_DATA_SCREEN_WIDTH
   #define WIDGET_SCREEN_HEIGHT ACC_DATA_SCREEN_HEIGHT
+#elif defined(PROJECT_ALGORITHM_ANIMATION) && defined(ALGORITHM_ANIMATION_SCREEN_WIDTH) && defined(ALGORITHM_ANIMATION_SCREEN_HEIGHT)
+  #define WIDGET_SCREEN_WIDTH ALGORITHM_ANIMATION_SCREEN_WIDTH
+  #define WIDGET_SCREEN_HEIGHT ALGORITHM_ANIMATION_SCREEN_HEIGHT
 #endif
 
 #ifndef WIDGET_SCREEN_WIDTH
@@ -93,7 +98,12 @@ int main(int argc, char **argv)
 
   /*Initialize the HAL (display, input devices, tick) for LVGL*/
   /* Screen size is set based on the selected project */
-  sdl_hal_init(WIDGET_SCREEN_WIDTH, WIDGET_SCREEN_HEIGHT);
+  lv_display_t * disp = sdl_hal_init(WIDGET_SCREEN_WIDTH, WIDGET_SCREEN_HEIGHT);
+  (void)disp;
+#ifdef PROJECT_ALGORITHM_ANIMATION
+  /* Small 240x240 screen: allow the user to drag the window corner to scale */
+  lv_sdl_window_set_resizeable(disp, true);
+#endif
 #ifdef PROJECT_HAIR_DRYER
   /* Initialize Hair Dryer UI */
   hair_dryer_ui_init();
@@ -112,6 +122,9 @@ int main(int argc, char **argv)
 #elif defined(PROJECT_ACC_DATA)
   /* Initialize Accelerometer Data UI */
   acc_data_ui_init();
+#elif defined(PROJECT_ALGORITHM_ANIMATION)
+  /* Initialize Algorithm Animation UI */
+  algorithm_animation_ui_init();
 #else
   /* Default: Run the demo widgets */
   lv_demo_widgets();
