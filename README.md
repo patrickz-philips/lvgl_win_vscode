@@ -12,7 +12,7 @@ This repository is the Windows SDL host for a set of LVGL application modules. T
 | `FreeRTOS/` | Optional FreeRTOS kernel dependency |
 | `CMakeLists.txt` | Host and application integration |
 | `build.bat`, `run.bat`, `clean.bat` | Windows build, run, and cleanup entry points |
-| `docs/` | Build modes, runtime controls, and integration APIs |
+| `docs/` | Baseline documents, workflow definition, and archived knowledge |
 
 Generated files are kept under `build/` and `bin/` and are not source-controlled.
 
@@ -82,7 +82,7 @@ $env:VCPKG_TARGET_TRIPLET = "x64-windows"
 Remove-Item Env:VCPKG_TARGET_TRIPLET
 ```
 
-Static and dynamic triplets must not reuse the same CMake cache. See [docs/STANDALONE.md](docs/STANDALONE.md) for the runtime distinction and [docs/BUILD.md](docs/BUILD.md) for all targets and manual CMake commands.
+Static and dynamic triplets must not reuse the same CMake cache. See [docs/archive/knowledge/build-toolchain.md](docs/archive/knowledge/build-toolchain.md) for the runtime distinction, all targets, and manual CMake commands.
 
 ## Submodule Development
 
@@ -90,8 +90,15 @@ Changes under `projects/*`, `lvgl/`, or `FreeRTOS/` belong to their respective r
 
 ## Documentation
 
-- [Build guide](docs/BUILD.md)
-- [Standalone and dependent builds](docs/STANDALONE.md)
-- [Runtime controls and integration APIs](docs/USE.md)
-- [中文构建说明](docs/%E6%9E%84%E5%BB%BA%E8%AF%B4%E6%98%8E.md)
-- [中文使用说明](docs/%E4%BD%BF%E7%94%A8%E8%AF%B4%E6%98%8E.md)
+Baseline documents (kept current by the `handoff` stage):
+
+- [Product spec](docs/product-spec.md) — delivered capabilities, users, glossary
+- [Architecture](docs/architecture.md) — tech stack, module structure, ADRs, tech debt
+- [UI behavior](docs/ui-behavior.md) — simulator controls per project
+- [Acceptance criteria](docs/acceptance-criteria.md) — regression command set
+
+Working agreements:
+
+- [Workflow](docs/workflow.md) — the three-agent state machine (single source of truth)
+- [Spec input format](docs/spec.md) — how to submit a new piece of work
+- [Knowledge index](docs/archive/knowledge/index.md) — build toolchain and module API notes

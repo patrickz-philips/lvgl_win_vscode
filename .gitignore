@@ -4,8 +4,6 @@ bin/
 
 # Ignore all dot folders, with below exceptions
 .*/
-!.github/
-!.github/**
 
 # VSCode
 .vscode

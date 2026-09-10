@@ -170,8 +170,9 @@ Add `<NAME>` to the valid-project case list.
 ### `clean.bat` and `clean.sh`
 Add `<NAME>` to the valid-project case list if they enumerate projects explicitly.
 
-### `docs/BUILD.md`
-Add a row to the Supported Projects table:
+### `docs/archive/knowledge/build-toolchain.md`
+Add a row to the project argument table:
 ```
 | `<NAME>` | `projects/<name>` | <width> x <height> |
 ```
+Also add the module to `docs/product-spec.md` (delivered capabilities) and `docs/ui-behavior.md` (page/component behavior).

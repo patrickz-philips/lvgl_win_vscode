@@ -151,9 +151,9 @@ fi
 
 ---
 
-## docs/BUILD.md — Asset Handling section
+## docs/archive/knowledge/build-toolchain.md — asset handling section
 
-Add a line to the Asset Handling table:
+Add a line to the asset handling list:
 
 ```
 - <Name> Debug loads `projects/<name>/assets/<file>.png` at runtime.

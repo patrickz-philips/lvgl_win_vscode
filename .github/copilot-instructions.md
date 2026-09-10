@@ -17,8 +17,12 @@
 
 - Run commands from the repository root.
 - Keep vcpkg in the sibling directory `../vcpkg`; never add machine-specific absolute paths.
-- Build the affected application with `build.bat <PROJECT> <Debug|Release>` on Windows or `./build.sh <PROJECT> <Debug|Release>` on macOS, or the equivalent CMake commands in `docs/BUILD.md`.
+- Build the affected application with `build.bat <PROJECT> <Debug|Release>` on Windows or `./build.sh <PROJECT> <Debug|Release>` on macOS, or the equivalent CMake commands in `docs/archive/knowledge/build-toolchain.md`.
 - Run with the same project and configuration using `run.bat <PROJECT> <Debug|Release>` on Windows or `./run.sh <PROJECT> <Debug|Release>` on macOS.
 - Validate the narrowest affected target after a code or build-system change.
 
-See `docs/BUILD.md` for supported targets and `docs/USE.md` for runtime and API contracts.
+## Workflow
+
+Non-trivial work runs through the agent state machine defined by `.github/agents/*.agent.md` and `.github/prompts/pz-*.prompt.md` — those files are the machine-executable source of truth. `docs/workflow.md` is the human-readable mirror; change `.github/` first, then sync it. Entry points: `/pz-feature-workflow`, `/pz-ui-workflow`, `/pz-bugfix-workflow`, `/pz-refactor-workflow`; `/pz-continue` resumes, `/pz-quick-fix` is the only sanctioned bypass, `/pz-modify-harness` is the only way to change the workflow itself. Agents: `analyzer` (docs only), `executor` (code and git writes), `reviewer` (read-only judgement), `explorer` (dependency admission research, no execute permission).
+
+Baseline documents are `docs/product-spec.md`, `docs/architecture.md`, `docs/ui-behavior.md`, and `docs/acceptance-criteria.md`; the `handoff` stage keeps them current. Read only the keyword table in `docs/archive/knowledge/index.md` before work, and load a knowledge file in full only on a keyword hit.
